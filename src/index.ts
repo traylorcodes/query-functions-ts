@@ -3,31 +3,6 @@
 */
 import config from './config.json';
 
-
-type PopulationData = {
-    P0010001: number,
-    P0010001_D0: number,
-    P0010001_D1: number,
-    P0010001_D2: number,
-    P0010001_D3: number,
-    P0010001_D4: number,
-    P0010001_Dx: number,
-    P0020002: number,
-    P0020002_Dx: number,
-    P0020003: number,
-    P0020003_Dx: number,
-};
-
-type HousingData = {
-    H0010001: number,
-    H0010001_Dx: number,
-    H0010001_D4: number,
-    H0010001_D3: number,
-    H0010001_D2: number,
-    H0010001_D1: number,
-    H0010001_D0: number
-};
-
 type WaterAndAreaData = {
     ALAND: number,
     AWATER: number
@@ -44,7 +19,7 @@ type FipsGeometryQueryOptions = {
 };
 
 type Point = {
-    spatialReference: {wkid: number},
+    spatialReference: { wkid: number },
     geometry: {
         x: number,
         y: number
@@ -55,7 +30,7 @@ type Point = {
 }
 
 type Polygon = {
-    spatialReference: {wkid: number},
+    spatialReference: { wkid: number },
     geometry: {
         rings: Array<number>[][]
     },
@@ -65,7 +40,7 @@ type Polygon = {
 }
 
 type Polyline = {
-    spatialReference: {wkid: number},
+    spatialReference: { wkid: number },
     geometry: {
         paths: Array<number>[][][]
     },
@@ -121,7 +96,7 @@ function executeQuery(url: string, resolve: (value: any) => void, reject: (reaso
                             spatialReferenceWkid: data.spatialReference.wkid ?? null,
                             geometry: feature.geometry ?? null
                         }
-                        );
+                    );
                 });
                 resolve(temp);
                 // resolve(data);
@@ -142,7 +117,7 @@ function executeQuery(url: string, resolve: (value: any) => void, reject: (reaso
  * @returns Promise<PopulationData[]>
  */
 // export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number, geometryType: "esriGeometryEnvelope" | "esriGeometryPoint" | "esriGeometryPolyline" | "esriGeometryPolygon" | "esriGeometryMultipoint"}, token?: string): Promise<PopulationData[]> => {
-export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<PopulationData[]> => {
+export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<Array<Point | Polygon | Polyline>> => {
     return new Promise((resolve, reject) => {
         let url: string;
         if (countyFIPS && !geometry) {
@@ -183,7 +158,7 @@ export const getPopulationData = (countyFIPS?: string, geometry?: { spatialRefer
  * @param geometry The geometry used to query for a feature to return data for
  * @returns Promise<HousingData[]>
  */
-export const getHousingData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<HousingData[]> => {
+export const getHousingData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<Point | Polygon | Polyline> => {
     return new Promise((resolve, reject) => {
         let url: string;
         if (countyFIPS && !geometry) {
@@ -220,40 +195,13 @@ export const getHousingData = (countyFIPS?: string, geometry?: { spatialReferenc
 
 
 export const getWaterAndLandArea = (options: FipsGeometryQueryOptions): Promise<WaterAndAreaData[]> => {
-return new Promise((resolve, reject) => {
-let url: string = checkForFipsOrGeometry(options, config.waterAndAreaFields);
-if (url === '') {
-    reject('No FIPS code or geometry was provided.');
-}
-executeQuery(url, resolve, reject);
-// if (options.countyFIPS && !options.geometry) {
-//     url = generateUrlParams(
-//         config.populationServiceUrl,
-//         {
-//             // where: `${config.fipsCodeFieldName} = ${countyFIPS}`,
-//             where: `GEOID = '${options.countyFIPS}'`,
-//             outFields: config.housingFields,
-//             token: options.token ? options.token : null
-//         }
-//     );
-// } else if (!options.countyFIPS && options.geometry) {
-//     url = generateUrlParams(
-//         config.populationServiceUrl,
-//         {
-//             outFields: config.housingFields,
-//             spatialReferenceWkid: options.geometry.spatialReference,
-//             geometry: `${options.geometry.x}, ${options.geometry.y}`,
-//             geometryType: "esriGeometryPoint",
-//             // geometryType: geometry.geometryType
-//             token: options.token ? options.token : null
-//         }
-//     );
-// } else {
-//     reject('No FIPS code or geometry was provided.');
-//     return;
-// }
-
-});
+    return new Promise((resolve, reject) => {
+        let url: string = checkForFipsOrGeometry(options, config.waterAndAreaFields);
+        if (url === '') {
+            reject('No FIPS code or geometry was provided.');
+        }
+        executeQuery(url, resolve, reject);
+    });
 }
 
 
