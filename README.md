@@ -20,7 +20,7 @@ Currently consumes 3 parameters:
 - x: a numerical x value number
 - y: a numerical y value number
 **token**: An optional token to provide for use with services that are protected.
-```
+```ts
 import { GetPopulationData } from '@traylorcodes/query-functions-ts'
 
 // get population data by providing a county FIPS code
