@@ -5,23 +5,25 @@
     "populationServiceObjectIdField": "OBJECTID",
     "awareIdFieldName": "Aware_ID",
     "fipsCodeFieldName": "GEOID",
-    "generalPopulationField": "P0010001",
     "populationFields": [
         "P0010001",
+        "P0020002",
+        "P0020003"
+    ],
+    "populationDroughtFields": [
         "P0010001_D0",
         "P0010001_D1",
         "P0010001_D2",
         "P0010001_D3",
         "P0010001_D4",
         "P0010001_Dx",
-        "P0020002",
         "P0020002_Dx",
-        "P0020003",
         "P0020003_Dx"
     ],
-    "generalHousingField": "H0010001",
     "housingFields": [
-        "H0010001",
+        "H0010001"
+    ],
+    "housingDroughtFields": [
         "H0010001_Dx",
         "H0010001_D4",
         "H0010001_D3",

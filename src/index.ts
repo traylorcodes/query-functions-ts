@@ -2,52 +2,7 @@
     Modules to help retrieve data from feature services
 */
 import config from './config.json';
-
-type WaterAndAreaData = {
-    ALAND: number,
-    AWATER: number
-}
-
-type FipsGeometryQueryOptions = {
-    countyFIPS?: string,
-    geometry?: {
-        spatialReference: number,
-        x: number,
-        y: number
-    },
-    token?: string
-};
-
-type Point = {
-    spatialReference: { wkid: number },
-    geometry: {
-        x: number,
-        y: number
-    }
-    attributes: {
-        [key: string]: number | string
-    }
-}
-
-type Polygon = {
-    spatialReference: { wkid: number },
-    geometry: {
-        rings: Array<number>[][]
-    },
-    attributes: {
-        [key: string]: number | string
-    }
-}
-
-type Polyline = {
-    spatialReference: { wkid: number },
-    geometry: {
-        paths: Array<number>[][][]
-    },
-    attributes: {
-        [key: string]: number | string
-    }
-}
+import * as types from './types';
 
 /**
  * Creates the URL used to execute the query
@@ -86,10 +41,9 @@ function executeQuery(url: string, resolve: (value: any) => void, reject: (reaso
                     reject(data.error);
                     return;
                 }
-                console.log('data', data);
+                // console.log('data', data);
                 const temp: any = [];
-                // const temp: Array<PopulationData | HousingData | WaterAndAreaData> = [];
-                data.features.forEach((feature: Point | Polygon | Polyline) => {
+                data.features.forEach((feature: types.Point | types.Polygon | types.Polyline) => {
                     temp.push(
                         {
                             attributes: feature.attributes,
@@ -117,14 +71,13 @@ function executeQuery(url: string, resolve: (value: any) => void, reject: (reaso
  * @returns Promise<PopulationData[]>
  */
 // export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number, geometryType: "esriGeometryEnvelope" | "esriGeometryPoint" | "esriGeometryPolyline" | "esriGeometryPolygon" | "esriGeometryMultipoint"}, token?: string): Promise<PopulationData[]> => {
-export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<Array<Point | Polygon | Polyline>> => {
+export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<Array<types.Point | types.Polygon | types.Polyline>> => {
     return new Promise((resolve, reject) => {
         let url: string;
         if (countyFIPS && !geometry) {
             url = generateUrlParams(
                 config.populationServiceUrl,
                 {
-                    // where: `${config.fipsCodeFieldName} = ${countyFIPS}`,
                     where: `GEOID = '${countyFIPS}'`,
                     outFields: config.populationFields,
                     token: token ? token : null
@@ -139,7 +92,6 @@ export const getPopulationData = (countyFIPS?: string, geometry?: { spatialRefer
                     spatialReferenceWkid: geometry.spatialReference,
                     geometry: `${geometry.x}, ${geometry.y}`,
                     geometryType: "esriGeometryPoint",
-                    // geometryType: geometry.geometryType
                     token: token ? token : null
                 }
             );
@@ -158,7 +110,7 @@ export const getPopulationData = (countyFIPS?: string, geometry?: { spatialRefer
  * @param geometry The geometry used to query for a feature to return data for
  * @returns Promise<HousingData[]>
  */
-export const getHousingData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<Point | Polygon | Polyline> => {
+export const getHousingData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<types.Point | types.Polygon | types.Polyline> => {
     return new Promise((resolve, reject) => {
         let url: string;
         if (countyFIPS && !geometry) {
@@ -166,7 +118,6 @@ export const getHousingData = (countyFIPS?: string, geometry?: { spatialReferenc
                 config.populationServiceUrl,
                 {
                     where: `${config.fipsCodeFieldName} = ${countyFIPS}`,
-                    // where: `GEOID = '${countyFIPS}'`,
                     outFields: config.housingFields,
                     token: token ? token : null
                 }
@@ -180,7 +131,6 @@ export const getHousingData = (countyFIPS?: string, geometry?: { spatialReferenc
                     spatialReferenceWkid: geometry.spatialReference,
                     geometry: `${geometry.x}, ${geometry.y}`,
                     geometryType: "esriGeometryPoint",
-                    // geometryType: geometry.geometryType
                     token: token ? token : null
                 }
             );
@@ -194,7 +144,7 @@ export const getHousingData = (countyFIPS?: string, geometry?: { spatialReferenc
 }
 
 
-export const getWaterAndLandArea = (options: FipsGeometryQueryOptions): Promise<WaterAndAreaData[]> => {
+export const getWaterAndLandArea = (options: types.FipsOrGeometryQueryOptions): Promise<Array<types.Point | types.Polygon | types.Polyline>> => {
     return new Promise((resolve, reject) => {
         let url: string = checkForFipsOrGeometry(options, config.waterAndAreaFields);
         if (url === '') {
@@ -205,13 +155,12 @@ export const getWaterAndLandArea = (options: FipsGeometryQueryOptions): Promise<
 }
 
 
-const checkForFipsOrGeometry = (options: FipsGeometryQueryOptions, outFields: Array<string>): string => {
+const checkForFipsOrGeometry = (options: types.FipsOrGeometryQueryOptions, outFields: Array<string>): string => {
     if (options.countyFIPS && !options.geometry) {
         return generateUrlParams(
             config.populationServiceUrl,
             {
                 where: `${config.fipsCodeFieldName} = ${options.countyFIPS}`,
-                // where: `GEOID = '${options.countyFIPS}'`,
                 outFields: outFields,
                 token: options.token ? options.token : null
             }
@@ -224,7 +173,6 @@ const checkForFipsOrGeometry = (options: FipsGeometryQueryOptions, outFields: Ar
                 spatialReferenceWkid: options.geometry.spatialReference,
                 geometry: `${options.geometry.x}, ${options.geometry.y}`,
                 geometryType: "esriGeometryPoint",
-                // geometryType: geometry.geometryType
                 token: options.token ? options.token : null
             }
         );
