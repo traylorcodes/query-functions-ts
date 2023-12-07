@@ -1,13 +1,13 @@
 {
   "name": "query-functions-ts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Querying Functions for use in the Living Atlas team's applications",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-      "dist"
-   ],
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "echo \"Error: no test specified\" && exit 1"
