@@ -6,7 +6,8 @@ This module provides various functions that will be used for development in the 
 They will provide quick access to various bits of data- from housing, to population, etc.
 
 ## Use
-To use this library, install it in your application using the command ```npm i query-functions-ts```
+To use this library, install it in your application using the command
+ ```npm i query-functions-ts```
 
 ## Available Functions
 
@@ -25,7 +26,7 @@ Currently consumes 3 parameters:
 **token**: An optional token to provide for use with services that are protected.
 
 ```ts
-import { getPopulationData } from '@traylorcodes/query-functions-ts'
+import { getPopulationData } from 'query-functions-ts'
 
 // get population data by providing a county FIPS code
 getPopulationData('27137', undefined, token)
@@ -67,7 +68,7 @@ Currently consumes 3 parameters:
 **token**: An optional token to provide for use with services that are protected.
 
 ```ts
-import { getHousingData } from '@traylorcodes/query-functions-ts'
+import { getHousingData } from 'query-functions-ts'
 
 // get population data by providing a county FIPS code
 getHousingData('27137', undefined, token)
@@ -109,7 +110,7 @@ Currently consumes 3 parameters:
 **token**: An optional token to provide for use with services that are protected.
 
 ```ts
-import { getWaterAndLandArea } from '@traylorcodes/query-functions-ts'
+import { getWaterAndLandArea } from 'query-functions-ts'
 
 // get population data by providing a county FIPS code
 getWaterAndLandArea('27137', undefined, token)
