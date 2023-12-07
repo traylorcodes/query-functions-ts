@@ -68,7 +68,8 @@ function executeQuery(url: string, resolve: (value: any) => void, reject: (reaso
  * Retrieves population data for a specific county. Can be used to find a specific county by FIPS code or a point geometry to find a feature to return data for.
  * @param countyFIPS The FIPS code for a specific county to return data for
  * @param geometry The geometry used to query for a feature to return data for
- * @returns Promise<PopulationData[]>
+ * @param token A token that can optionally be provide for cases where the service is protected
+ * @returns Promise<Array<types.Point | types.Feature | types.Polygon>>
  */
 // export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number, geometryType: "esriGeometryEnvelope" | "esriGeometryPoint" | "esriGeometryPolyline" | "esriGeometryPolygon" | "esriGeometryMultipoint"}, token?: string): Promise<PopulationData[]> => {
 export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<Array<types.Point | types.Polygon | types.Polyline>> => {
@@ -108,7 +109,8 @@ export const getPopulationData = (countyFIPS?: string, geometry?: { spatialRefer
  * Retrieves housing data for a specific county. Can be used to find a specific county by FIPS code or a point geometry to find a feature to return data for.
  * @param countyFIPS The FIPS code for a specific county to return data for
  * @param geometry The geometry used to query for a feature to return data for
- * @returns Promise<HousingData[]>
+ * @param token A token that can optionally be provide for cases where the service is protected
+ * @returns Promise<Array<types.Point | types.Feature | types.Polygon>>
  */
 export const getHousingData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<types.Point | types.Polygon | types.Polyline> => {
     return new Promise((resolve, reject) => {
@@ -143,39 +145,42 @@ export const getHousingData = (countyFIPS?: string, geometry?: { spatialReferenc
     });
 }
 
-
-export const getWaterAndLandArea = (options: types.FipsOrGeometryQueryOptions): Promise<Array<types.Point | types.Polygon | types.Polyline>> => {
+/**
+ * Retrieves water and land area data for a specific county. Can be used to find a specific county by FIPS code or a point geometry to find a feature to return data for.
+ * @param countyFIPS The FIPS code for a specific county to return data for
+ * @param geometry The geometry used to query for a feature to return data for
+ * @param token A token that can optionally be provide for cases where the service is protected
+ * @returns Promise<Array<types.Point | types.Feature | types.Polygon>>
+ */
+export const getWaterAndLandArea = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<Array<types.Point | types.Polygon | types.Polyline>> => {
     return new Promise((resolve, reject) => {
-        let url: string = checkForFipsOrGeometry(options, config.waterAndAreaFields);
-        if (url === '') {
+        let url: string;
+        if (countyFIPS && !geometry) {
+            url = generateUrlParams(
+                config.populationServiceUrl,
+                {
+                    where: `${config.fipsCodeFieldName} = ${countyFIPS}`,
+                    outFields: config.waterAndAreaFields,
+                    token: token ? token : null
+                }
+            );
+        }
+        else if (!countyFIPS && geometry) {
+            url = generateUrlParams(
+                config.populationServiceUrl,
+                {
+                    outFields: config.waterAndAreaFields,
+                    spatialReferenceWkid: geometry.spatialReference,
+                    geometry: `${geometry.x}, ${geometry.y}`,
+                    geometryType: "esriGeometryPoint",
+                    token: token ? token : null
+                }
+            );
+        }
+        else {
             reject('No FIPS code or geometry was provided.');
+            return;
         }
         executeQuery(url, resolve, reject);
     });
-}
-
-
-const checkForFipsOrGeometry = (options: types.FipsOrGeometryQueryOptions, outFields: Array<string>): string => {
-    if (options.countyFIPS && !options.geometry) {
-        return generateUrlParams(
-            config.populationServiceUrl,
-            {
-                where: `${config.fipsCodeFieldName} = ${options.countyFIPS}`,
-                outFields: outFields,
-                token: options.token ? options.token : null
-            }
-        );
-    } else if (!options.countyFIPS && options.geometry) {
-        return generateUrlParams(
-            config.populationServiceUrl,
-            {
-                outFields: outFields,
-                spatialReferenceWkid: options.geometry.spatialReference,
-                geometry: `${options.geometry.x}, ${options.geometry.y}`,
-                geometryType: "esriGeometryPoint",
-                token: options.token ? options.token : null
-            }
-        );
-    }
-    else return '';
 }
