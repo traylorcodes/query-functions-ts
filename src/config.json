@@ -1,7 +1,8 @@
 {
-    "populationServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/at_risk_drought_v1/FeatureServer/1",
-    "droughtServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/at_risk_drought_v1/FeatureServer/1",
-    "indicatorServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/at_risk_drought_v1/FeatureServer/0",
+    "populationServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/aware_support_view1/FeatureServer/1",
+    "droughtServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/aware_support_view1/FeatureServer/1",
+    "indicatorServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/aware_support_view1/FeatureServer/0",
+    "graceTableServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/aware_support_view1/FeatureServer/2",
     "populationServiceObjectIdField": "OBJECTID",
     "awareIdFieldName": "Aware_ID",
     "fipsCodeFieldName": "GEOID",

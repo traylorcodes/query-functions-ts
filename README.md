@@ -18,9 +18,9 @@ Currently consumes 3 parameters:
 **countyFIPS**: a string value of a county FIPS code to retrieve population data for.
 
 **geometry**: An object containing geometry information to query with. The object should contain:
-- spatialReference - a numerical value of a Spatial Reference Wkid
-- x: a numerical x value number
-- y: a numerical y value number
+- **spatialReference**: a numerical value of a Spatial Reference Wkid
+- **x**: a numerical x value number
+- **y**: a numerical y value number
 
 **token**: An optional token to provide for use with services that are protected.
 
@@ -60,9 +60,9 @@ Currently consumes 3 parameters:
 **countyFIPS**: a string value of a county FIPS code to retrieve housing data for.
 
 **geometry**: An object containing geometry information to query with. The object should contain:
-- spatialReference - a numerical value of a Spatial Reference Wkid
-- x: a numerical x value number
-- y: a numerical y value number
+- **spatialReference**: a numerical value of a Spatial Reference Wkid
+- **x**: a numerical x value number
+- **y**: a numerical y value number
 
 **token**: An optional token to provide for use with services that are protected.
 
@@ -102,9 +102,9 @@ Currently consumes 3 parameters:
 **countyFIPS**: a string value of a county FIPS code to retrieve land and water area data for.
 
 **geometry**: An object containing geometry information to query with. The object should contain:
-- spatialReference - a numerical value of a Spatial Reference Wkid
-- x: a numerical x value number
-- y: a numerical y value number
+- **spatialReference**: a numerical value of a Spatial Reference Wkid
+- **x**: a numerical x value number
+- **y**: a numerical y value number
 
 **token**: An optional token to provide for use with services that are protected.
 
