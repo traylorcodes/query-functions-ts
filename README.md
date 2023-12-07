@@ -15,10 +15,12 @@ Retrieves population data for a specific county. Can be used to find a specific 
 
 Currently consumes 3 parameters:
 **countyFIPS**: a string value of a county FIPS code to retrieve population data for.
+
 **geometry**: An object containing geometry information to query with. The object should contain:
 - spatialReference - a numerical value of a Spatial Reference Wkid
 - x: a numerical x value number
 - y: a numerical y value number
+
 **token**: An optional token to provide for use with services that are protected.
 ```ts
 import { GetPopulationData } from '@traylorcodes/query-functions-ts'
