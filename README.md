@@ -99,7 +99,7 @@ Retrieves water and land area data for a specific county. Can be used to find a 
 
 Currently consumes 3 parameters:
 
-**countyFIPS**: a string value of a county FIPS code to retrieve housing data for.
+**countyFIPS**: a string value of a county FIPS code to retrieve land and water area data for.
 
 **geometry**: An object containing geometry information to query with. The object should contain:
 - spatialReference - a numerical value of a Spatial Reference Wkid
