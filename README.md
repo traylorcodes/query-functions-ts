@@ -25,11 +25,11 @@ Currently consumes 3 parameters:
 
 **token**: An optional token to provide for use with services that are protected.
 
----------
+
 Returns an array of objects containing the key value pairs:
-- **P0010001**: number
-- **P0020002**: number
-- **P0020003**: number
+- **P0010001**: number - The total population within a county
+- **P0020002**: number - The total urban population within a county
+- **P0020003**: number - The total rural population within a county
 
 ```ts
 import { getPopulationData } from 'query-functions-ts'
@@ -58,6 +58,7 @@ getPopulationData(undefined,
     // handleError(e);
 });
 ```
+---
 
 ### getHousingData
 Retrieves housing data for a specific county. Can be used to find a specific county by FIPS code or a point geometry to find a feature to return data for. Either a county FIPS code or a geometry must be provided for this function to retrieve data.
@@ -72,6 +73,10 @@ Currently consumes 3 parameters:
 - **y**: a numerical y value number
 
 **token**: An optional token to provide for use with services that are protected.
+
+
+Returns an array of objects containing the key value pairs:
+- **H0010001**: number - The total amount of housing units within a county
 
 ```ts
 import { getHousingData } from 'query-functions-ts'
@@ -100,6 +105,7 @@ getHousingData(undefined,
     // handleError(e);
 });
 ```
+---
 
 ### getWaterAndLandArea
 Retrieves water and land area data for a specific county. Can be used to find a specific county by FIPS code or a point geometry to find a feature to return data for. Either a county FIPS code or a geometry must be provided for this function to retrieve data.
@@ -114,6 +120,11 @@ Currently consumes 3 parameters:
 - **y**: a numerical y value number
 
 **token**: An optional token to provide for use with services that are protected.
+
+
+Returns an array of objects containing the key value pairs:
+- **ALAND**: number - The surface area (square meters) of land within a county
+- **AWATER**: number - The surface area (square meters) of water within a county
 
 ```ts
 import { getWaterAndLandArea } from 'query-functions-ts'
