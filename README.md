@@ -25,6 +25,12 @@ Currently consumes 3 parameters:
 
 **token**: An optional token to provide for use with services that are protected.
 
+---------
+Returns an array of objects containing the key value pairs:
+- **P0010001**: number
+- **P0020002**: number
+- **P0020003**: number
+
 ```ts
 import { getPopulationData } from 'query-functions-ts'
 
