@@ -1,9 +1,4 @@
 # query-functions-ts
-Querying functions for use in the Living Atlas team's applications
-
-
-This module provides various functions that will be used for development in the applications that belong to the Living Atlas team.
-They will provide quick access to various bits of data- from housing, to population, etc.
 
 ## Use
 To use this library, install it in your application using the command
