@@ -39,6 +39,7 @@ function executeQuery(url: string, resolve: (value: any) => void, reject: (reaso
             response.json().then((data) => {
                 if (data.error) {
                     reject(data.error);
+                    // reject(url)
                     return;
                 }
                 // console.log('data', data);
@@ -57,10 +58,12 @@ function executeQuery(url: string, resolve: (value: any) => void, reject: (reaso
             })
                 .catch((e) => {
                     reject(e);
+                    // reject(url);
                 })
         })
         .catch((e) => {
             reject(e)
+            // reject(url)
         });
 }
 
@@ -71,7 +74,6 @@ function executeQuery(url: string, resolve: (value: any) => void, reject: (reaso
  * @param token A token that can optionally be provide for cases where the service is protected
  * @returns Promise<Array<types.Point | types.Feature | types.Polygon>>
  */
-// export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number, geometryType: "esriGeometryEnvelope" | "esriGeometryPoint" | "esriGeometryPolyline" | "esriGeometryPolygon" | "esriGeometryMultipoint"}, token?: string): Promise<PopulationData[]> => {
 export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<Array<types.Point | types.Polygon | types.Polyline>> => {
     return new Promise((resolve, reject) => {
         let url: string;
