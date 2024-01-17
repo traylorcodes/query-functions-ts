@@ -30,5 +30,8 @@
     "ts-node": "^10.9.1",
     "tsup": "^8.0.1",
     "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "rollup": "^4.9.5"
   }
 }
