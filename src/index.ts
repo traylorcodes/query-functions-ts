@@ -81,7 +81,7 @@ export const getPopulationData = (countyFIPS?: string, geometry?: { spatialRefer
                 {
                     where: `GEOID = '${countyFIPS}'`,
                     outFields: config.populationFields,
-                    token: token ? token : null
+                    token: token ? token : ''
                 }
             );
         }
@@ -93,7 +93,7 @@ export const getPopulationData = (countyFIPS?: string, geometry?: { spatialRefer
                     spatialReferenceWkid: geometry.spatialReference,
                     geometry: `${geometry.x}, ${geometry.y}`,
                     geometryType: "esriGeometryPoint",
-                    token: token ? token : null
+                    token: token ? token : ''
                 }
             );
         }
@@ -121,7 +121,7 @@ export const getHousingData = (countyFIPS?: string, geometry?: { spatialReferenc
                 {
                     where: `${config.fipsCodeFieldName} = ${countyFIPS}`,
                     outFields: config.housingFields,
-                    token: token ? token : null
+                    token: token ? token : ''
                 }
             );
         }
@@ -133,7 +133,7 @@ export const getHousingData = (countyFIPS?: string, geometry?: { spatialReferenc
                     spatialReferenceWkid: geometry.spatialReference,
                     geometry: `${geometry.x}, ${geometry.y}`,
                     geometryType: "esriGeometryPoint",
-                    token: token ? token : null
+                    token: token ? token : ''
                 }
             );
         }
@@ -161,7 +161,7 @@ export const getWaterAndLandArea = (countyFIPS?: string, geometry?: { spatialRef
                 {
                     where: `${config.fipsCodeFieldName} = ${countyFIPS}`,
                     outFields: config.waterAndAreaFields,
-                    token: token ? token : null
+                    token: token ? token : ''
                 }
             );
         }
@@ -173,7 +173,7 @@ export const getWaterAndLandArea = (countyFIPS?: string, geometry?: { spatialRef
                     spatialReferenceWkid: geometry.spatialReference,
                     geometry: `${geometry.x}, ${geometry.y}`,
                     geometryType: "esriGeometryPoint",
-                    token: token ? token : null
+                    token: token ? token : ''
                 }
             );
         }
