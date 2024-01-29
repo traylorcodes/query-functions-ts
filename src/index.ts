@@ -228,3 +228,24 @@ export const getDroughtLevelsByCountyFips = (fipsCode: string) => {
         );
     });
 }
+
+/**
+ * Retrieves a county and state name based on a given geometry
+ * @param geometry The geometry used to query for a feature to return data for
+ * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's county and state name
+ */
+export const getCountyAndStateName = (geometry: {x: number, y: number, spatialReference: number}) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                config.populationServiceUrl,
+                {
+                    outFields: config.stateAndCountyFieldNames,
+                    spatialReferenceWkid: geometry.spatialReference,
+                    geometry: `${geometry.x}, ${geometry.y}`,
+                    geometryType: "esriGeometryPoint",
+                    returnGeometry: false
+                }
+            ), resolve, reject);
+    });
+}

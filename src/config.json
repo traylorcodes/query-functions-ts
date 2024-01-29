@@ -6,6 +6,10 @@
     "populationServiceObjectIdField": "OBJECTID",
     "awareIdFieldName": "Aware_ID",
     "fipsCodeFieldName": "GEOID",
+    "stateAndCountyFieldNames": [
+        "NAME",
+        "State"
+    ],
     "populationFields": [
         "P0010001",
         "P0020002",
