@@ -186,3 +186,45 @@ export const getWaterAndLandArea = (countyFIPS?: string, geometry?: { spatialRef
         executeQuery(url, resolve, reject);
     });
 }
+
+/**
+ * Retrieves a county FIPS code for a given point's geometry
+ * @param geometry The geometry used to query for a feature to return data for
+ * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's FIPS code
+ */
+export const getCountyFipsCodeByGeometry = (geometry: { spatialReference: number, x: number, y: number }) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                config.populationServiceUrl,
+                {
+                    outFields: [config.fipsCodeFieldName],
+                    spatialReferenceWkid: geometry.spatialReference,
+                    geometry: `${geometry.x}, ${geometry.y}`,
+                    geometryType: "esriGeometryPoint",
+                    returnGeometry: false
+                }
+            ), resolve, reject);
+    });
+}
+
+/**
+ * Retrieves drought level data for a feature based on a given county FIPS code
+ * @param fipsCode the FIPS code of the county
+ * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's drought level data
+ */
+export const getDroughtLevelsByCountyFips = (fipsCode: string) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                config.populationServiceUrl,
+                {
+                    outFields: [config.populationDroughtFields],
+                    where: `${config.fipsCodeFieldName} = '${fipsCode}'`,
+                    returnGeometry: false
+                }
+            ),
+            resolve, reject
+        );
+    });
+}
