@@ -4,6 +4,15 @@
 import config from './config.json';
 import * as types from './types';
 
+
+export type CountyAndStateRequest = types.CountyAndStateRequest;
+export type GetFipsRequest = types.GetFipsRequest;
+export type DroughtPopRequest =  types.DroughtPopRequest;
+export type DroughtHousingRequest = types.DroughtHousingRequest;
+export type PopulationDataRequest = types.PopulationDataRequest;
+export type HousingDataRequest = types.HousingDataRequest;
+export type PointGeometryQueryParameters = types.PointGeometryQueryParameters;
+
 /**
  * Creates the URL used to execute the query
  * @param { string } serviceUrl The URL of the service REST endpoint to query on
@@ -209,11 +218,11 @@ export const getCountyFipsCodeByGeometry = (geometry: { spatialReference: number
 }
 
 /**
- * Retrieves drought level data for a feature based on a given county FIPS code
+ * Retrieves drought level population data for a feature based on a given county FIPS code
  * @param fipsCode the FIPS code of the county
- * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's drought level data
+ * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's population drought level data
  */
-export const getDroughtLevelsByCountyFips = (fipsCode: string) => {
+export const getPopulationDroughtLevelsByCountyFips = (fipsCode: string) => {
     return new Promise((resolve, reject) => {
         executeQuery(
             generateUrlParams(
@@ -230,22 +239,44 @@ export const getDroughtLevelsByCountyFips = (fipsCode: string) => {
 }
 
 /**
- * Retrieves a county and state name based on a given geometry
- * @param geometry The geometry used to query for a feature to return data for
- * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's county and state name
+ * Retrieves drought level housing data for a feature based on a given county FIPS code
+ * @param fipsCode the FIPS code of the county
+ * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's housing drought level data
  */
-export const getCountyAndStateName = (geometry: {x: number, y: number, spatialReference: number}) => {
+export const getHousingDroughtLevelsByCountyFips = (fipsCode: string) => {
     return new Promise((resolve, reject) => {
         executeQuery(
             generateUrlParams(
                 config.populationServiceUrl,
                 {
-                    outFields: config.stateAndCountyFieldNames,
-                    spatialReferenceWkid: geometry.spatialReference,
-                    geometry: `${geometry.x}, ${geometry.y}`,
-                    geometryType: "esriGeometryPoint",
+                    outFields: [config.housingDroughtFields],
+                    where: `${config.fipsCodeFieldName} = '${fipsCode}'`,
                     returnGeometry: false
                 }
-            ), resolve, reject);
+            ),
+            resolve, reject
+        );
     });
 }
+
+/**
+ * Retrieves a county and state name based on a given geometry
+ * @param geometry The geometry used to query for a feature to return data for
+ * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's county and state name
+ */
+export const getCountyAndStateName: (geometry: PointGeometryQueryParameters)
+    => Promise<types.CountyAndStateRequest> = (geometry: PointGeometryQueryParameters) => {
+        return new Promise<types.CountyAndStateRequest>((resolve, reject) => {
+            executeQuery(
+                generateUrlParams(
+                    config.populationServiceUrl,
+                    {
+                        outFields: config.stateAndCountyFieldNames,
+                        spatialReferenceWkid: geometry.spatialReference,
+                        geometry: `${geometry.x}, ${geometry.y}`,
+                        geometryType: "esriGeometryPoint",
+                        returnGeometry: false
+                    }
+                ), resolve, reject)
+        });
+    }

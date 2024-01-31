@@ -40,3 +40,48 @@ export type FipsOrGeometryQueryOptions = {
     },
     token?: string
 };
+
+export type PointGeometryQueryParameters = {
+    spatialReference: number,
+    x: number,
+    y: number,
+}
+
+
+// the format that the function returns data in
+export type CountyAndStateRequest = Array<{
+    NAME: string,
+    State: string,
+}>;
+
+export type GetFipsRequest = Array<{GEOID: string}>;
+
+export type DroughtPopRequest = Array<{
+    P0010001_D0: number,
+    P0010001_D1: number,
+    P0010001_D2: number,
+    P0010001_D3: number,
+    P0010001_D4: number,
+    P0010001_Dx: number,
+    P0020002_Dx: number,
+    P0020003_Dx: number,
+}>;
+
+export type DroughtHousingRequest = Array<{
+    H0010001_Dx: number,
+    H0010001_D4: number,
+    H0010001_D3: number,
+    H0010001_D2: number,
+    H0010001_D1: number,
+    H0010001_D0: number,
+}>;
+
+export type PopulationDataRequest = Array<{
+    P0010001: number,
+    P0020002: number,
+    P0020003: number,
+}>;
+
+export type HousingDataRequest = Array<{
+    H0010001: number,
+}>;
