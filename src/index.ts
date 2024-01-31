@@ -7,7 +7,7 @@ import * as types from './types';
 
 export type CountyAndStateRequest = types.CountyAndStateRequest;
 export type GetFipsRequest = types.GetFipsRequest;
-export type DroughtPopRequest =  types.DroughtPopRequest;
+export type DroughtPopRequest = types.DroughtPopRequest;
 export type DroughtHousingRequest = types.DroughtHousingRequest;
 export type PopulationDataRequest = types.PopulationDataRequest;
 export type HousingDataRequest = types.HousingDataRequest;
@@ -42,7 +42,7 @@ const generateUrlParams = (serviceUrl: string, options: any): string => {
  * @param { (reason?: any) => void } reject The reject function to complete a failed request
  * @returns void
  */
-function executeQuery(url: string, resolve: (value: any) => void, reject: (reason?: any) => void) {
+function executeQuery(url: string, returnAttributesOnly: boolean, resolve: (value: any) => void, reject: (reason?: any) => void) {
     fetch(url)
         .then((response) => {
             response.json().then((data) => {
@@ -54,7 +54,10 @@ function executeQuery(url: string, resolve: (value: any) => void, reject: (reaso
                 // console.log('data', data);
                 const temp: any = [];
                 data.features.forEach((feature: types.Point | types.Polygon | types.Polyline) => {
-                    temp.push(
+                    if (returnAttributesOnly) {
+                        temp.push(feature.attributes)
+                    }
+                    else temp.push(
                         {
                             attributes: feature.attributes,
                             spatialReferenceWkid: data.spatialReference.wkid ?? null,
@@ -83,7 +86,8 @@ function executeQuery(url: string, resolve: (value: any) => void, reject: (reaso
  * @param token A token that can optionally be provide for cases where the service is protected
  * @returns Promise<Array<types.Point | types.Feature | types.Polygon>>
  */
-export const getPopulationData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<Array<types.Point | types.Polygon | types.Polyline>> => {
+export const getPopulationData: (countyFIPS?: string, geometry?: types.PointGeometryQueryParameters, token?: string) => Promise<types.Point | types.Polygon | types.Polyline | types.PopulationDataRequest>
+= (countyFIPS?: string, geometry?: types.PointGeometryQueryParameters, token?: string): Promise<types.Point | types.Polygon | types.Polyline | types.PopulationDataRequest> => {
     return new Promise((resolve, reject) => {
         let url: string;
         if (countyFIPS && !geometry) {
@@ -112,7 +116,7 @@ export const getPopulationData = (countyFIPS?: string, geometry?: { spatialRefer
             reject('No FIPS code or geometry was provided.');
             return;
         }
-        executeQuery(url, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 
@@ -123,7 +127,8 @@ export const getPopulationData = (countyFIPS?: string, geometry?: { spatialRefer
  * @param token A token that can optionally be provide for cases where the service is protected
  * @returns Promise<Array<types.Point | types.Feature | types.Polygon>>
  */
-export const getHousingData = (countyFIPS?: string, geometry?: { spatialReference: number, x: number, y: number }, token?: string): Promise<types.Point | types.Polygon | types.Polyline> => {
+export const getHousingData: (countyFIPS?: string, geometry?: types.PointGeometryQueryParameters, token?: string) => Promise<types.Point | types.Polygon | types.Polyline | types.PopulationDataRequest>
+ = (countyFIPS?: string, geometry?: types.PointGeometryQueryParameters, token?: string): Promise<types.Point | types.Polygon | types.Polyline | types.PopulationDataRequest> => {
     return new Promise((resolve, reject) => {
         let url: string;
         if (countyFIPS && !geometry) {
@@ -152,7 +157,7 @@ export const getHousingData = (countyFIPS?: string, geometry?: { spatialReferenc
             reject('No FIPS code or geometry was provided.');
             return;
         }
-        executeQuery(url, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 
@@ -192,7 +197,7 @@ export const getWaterAndLandArea = (countyFIPS?: string, geometry?: { spatialRef
             reject('No FIPS code or geometry was provided.');
             return;
         }
-        executeQuery(url, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 
@@ -201,29 +206,30 @@ export const getWaterAndLandArea = (countyFIPS?: string, geometry?: { spatialRef
  * @param geometry The geometry used to query for a feature to return data for
  * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's FIPS code
  */
-export const getCountyFipsCodeByGeometry = (geometry: { spatialReference: number, x: number, y: number }) => {
-    return new Promise((resolve, reject) => {
-        executeQuery(
-            generateUrlParams(
-                config.populationServiceUrl,
-                {
-                    outFields: [config.fipsCodeFieldName],
-                    spatialReferenceWkid: geometry.spatialReference,
-                    geometry: `${geometry.x}, ${geometry.y}`,
-                    geometryType: "esriGeometryPoint",
-                    returnGeometry: false
-                }
-            ), resolve, reject);
-    });
-}
+export const getCountyFipsCodeByGeometry: (geometry: types.PointGeometryQueryParameters) => Promise<types.GetFipsRequest>
+    = (geometry: types.PointGeometryQueryParameters) => {
+        return new Promise<types.GetFipsRequest>((resolve, reject) => {
+            executeQuery(
+                generateUrlParams(
+                    config.populationServiceUrl,
+                    {
+                        outFields: [config.fipsCodeFieldName],
+                        spatialReferenceWkid: geometry.spatialReference,
+                        geometry: `${geometry.x}, ${geometry.y}`,
+                        geometryType: "esriGeometryPoint",
+                        returnGeometry: false
+                    }
+                ), true, resolve, reject);
+        });
+    }
 
 /**
  * Retrieves drought level population data for a feature based on a given county FIPS code
  * @param fipsCode the FIPS code of the county
  * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's population drought level data
  */
-export const getPopulationDroughtLevelsByCountyFips = (fipsCode: string) => {
-    return new Promise((resolve, reject) => {
+export const getPopulationDroughtLevelsByCountyFips: (fipsCode: string) => Promise<types.DroughtPopRequest> = (fipsCode: string) => {
+    return new Promise<types.DroughtPopRequest>((resolve, reject) => {
         executeQuery(
             generateUrlParams(
                 config.populationServiceUrl,
@@ -233,7 +239,7 @@ export const getPopulationDroughtLevelsByCountyFips = (fipsCode: string) => {
                     returnGeometry: false
                 }
             ),
-            resolve, reject
+            true, resolve, reject
         );
     });
 }
@@ -243,8 +249,8 @@ export const getPopulationDroughtLevelsByCountyFips = (fipsCode: string) => {
  * @param fipsCode the FIPS code of the county
  * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's housing drought level data
  */
-export const getHousingDroughtLevelsByCountyFips = (fipsCode: string) => {
-    return new Promise((resolve, reject) => {
+export const getHousingDroughtLevelsByCountyFips: (fipsCode: string) => Promise<types.DroughtHousingRequest> = (fipsCode: string) => {
+    return new Promise<types.DroughtHousingRequest>((resolve, reject) => {
         executeQuery(
             generateUrlParams(
                 config.populationServiceUrl,
@@ -254,7 +260,7 @@ export const getHousingDroughtLevelsByCountyFips = (fipsCode: string) => {
                     returnGeometry: false
                 }
             ),
-            resolve, reject
+            true, resolve, reject
         );
     });
 }
@@ -277,6 +283,6 @@ export const getCountyAndStateName: (geometry: PointGeometryQueryParameters)
                         geometryType: "esriGeometryPoint",
                         returnGeometry: false
                     }
-                ), resolve, reject)
+                ), true, resolve, reject)
         });
     }
