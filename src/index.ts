@@ -19,7 +19,7 @@ export type PointGeometryQueryParameters = types.PointGeometryQueryParameters;
  * @param { Object } options An object that contains different parameters to include in the request
  * @returns a URL that can be used to perform a query
  */
-const generateUrlParams = (serviceUrl: string, options: any): string => {
+const generateUrlParams = (serviceUrl: string, options: any, queryingRelatedFeatures?: boolean): string => {
     // replace where clause with 1=1 if it is null
     if (!options.where) {
         options.where = '1=1';
@@ -29,7 +29,7 @@ const generateUrlParams = (serviceUrl: string, options: any): string => {
         options.outFields = ['*'];
     }
 
-    return serviceUrl + '/query/?' + new URLSearchParams({
+    return serviceUrl + (queryingRelatedFeatures ? '/queryRelatedFeatures?' : '/query?') + new URLSearchParams({
         ...options,
         f: 'json'
     }).toString();
@@ -80,84 +80,164 @@ function executeQuery(url: string, returnAttributesOnly: boolean, resolve: (valu
 }
 
 /**
- * Retrieves population data for a specific county. Can be used to find a specific county by FIPS code or a point geometry to find a feature to return data for.
- * @param countyFIPS The FIPS code for a specific county to return data for
- * @param geometry The geometry used to query for a feature to return data for
- * @param token A token that can optionally be provide for cases where the service is protected
- * @returns Promise<Array<types.Point | types.Feature | types.Polygon>>
+ * new workflow:
+ * use geometry of point click to get county or state feature
+ * this will return:
+ * - OBJECTID
+ * - GEOID
+ * - Name, STATE
+ * - P0010001, P0020002, P0030003, H0010001, H0020002, H0030003
+ * 
+ * Then, use the retrieved object ID to query all related features for population data
+ * 
+ * will need to identify whether or not to use county or state service urls
  */
-export const getPopulationData: (countyFIPS?: string, geometry?: types.PointGeometryQueryParameters, token?: string) => Promise<types.Point | types.Polygon | types.Polyline | types.PopulationDataRequest>
-= (countyFIPS?: string, geometry?: types.PointGeometryQueryParameters, token?: string): Promise<types.Point | types.Polygon | types.Polyline | types.PopulationDataRequest> => {
-    return new Promise((resolve, reject) => {
-        let url: string;
-        if (countyFIPS && !geometry) {
-            url = generateUrlParams(
-                config.populationServiceUrl,
+
+// // get related features will 
+// export const getRelatedFeatures: (serviceUrl: string, objectId: number, relationshipId: number, options: any) => Promise<Array<any>> =
+//     (serviceUrl: string, objectId: number, relationshipId: number, options: any) => {
+
+//     }
+
+    export const getPopulationHistory: any = (getCountyOrStateData: 'county' | 'state', objectId: number, relationshipId: number) => {
+        return new Promise((resolve, reject) => {
+            executeQuery(
+                generateUrlParams(
+                    getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                    {
+                        outFields: ['*'],
+                        objectIds: [objectId],
+                        relationshipId: relationshipId,
+                        returnGeometry: false
+                    },
+                    true
+                )
+           ,true, resolve, reject )
+        });
+    }
+
+    export const getFeaturePopulationData: any = (getCountyOrStateData: 'county' | 'state') => {
+        return new Promise((resolve, reject) => {
+            executeQuery(
+                generateUrlParams(
+                    getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                    {
+                      outFields: [config.populationFields.join('%2C+')],
+                      returnGeometry: false,
+                    }
+                ),
+                true, resolve, reject)
+        });
+    };
+
+    // returns NAME, State, GEOID, OBJECTID
+    export const getIdInformationFromGeometry: any = (getCountyOrStateData: 'county' | 'state', geometry: {x: number, y: number, spatialReference: number}) => {
+        return new Promise((resolve, reject) => {
+            executeQuery(
+                generateUrlParams(
+                    getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                    {
+                        outFields: config.idInformationOutFields.join('%2C+'),
+                        spatialReferenceWkid: geometry.spatialReference,
+                        geometry: `${geometry.x}, ${geometry.y}`,
+                        geometryType: "esriGeometryPoint",
+                        returnGeometry: false,
+                    }
+                ),
+                true, resolve, reject)
+        });
+    }
+
+// object id, the county geo id, p1, p2, p3, h1, name, state
+// take object id and query related features using so
+
+// question: when do you generate the url parameters??
+
+/**
+ * Retrieves population data for a specific county or state based on a provided FIPS code or GEOID
+ * @param geoId The geoId to return data for
+ * @param getCountyOrStateData indicate whether to return data from the county service or the state service
+ * @returns Promise<Array<types.PopulationDataRequest>
+ */
+export const getPopulationDataByGeoId: (geoId: string, getCountyOrStateData: 'county' | 'state') => Promise<Array<types.PopulationDataRequest>> = (geoId: string, getCountyOrStateData: 'county' | 'state') => {
+    return new Promise<Array<types.PopulationDataRequest>>((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
                 {
-                    where: `GEOID = '${countyFIPS}'`,
-                    outFields: config.populationFields,
-                    token: token ? token : ''
+                    outFields: [config.populationFields],
+                    where: `${config.geoIdFieldName} = '${geoId}'`,
+                    returnGeometry: false
                 }
-            );
-        }
-        else if (!countyFIPS && geometry) {
-            url = generateUrlParams(
-                config.populationServiceUrl,
-                {
-                    outFields: config.populationFields,
-                    spatialReferenceWkid: geometry.spatialReference,
-                    geometry: `${geometry.x}, ${geometry.y}`,
-                    geometryType: "esriGeometryPoint",
-                    token: token ? token : ''
-                }
-            );
-        }
-        else {
-            reject('No FIPS code or geometry was provided.');
-            return;
-        }
-        executeQuery(url, true, resolve, reject);
+            ),
+            true, resolve, reject
+        );
     });
 }
 
 /**
- * Retrieves housing data for a specific county. Can be used to find a specific county by FIPS code or a point geometry to find a feature to return data for.
- * @param countyFIPS The FIPS code for a specific county to return data for
+ * Retrieves population data for a specific county based on a provided Point geometry
  * @param geometry The geometry used to query for a feature to return data for
- * @param token A token that can optionally be provide for cases where the service is protected
- * @returns Promise<Array<types.Point | types.Feature | types.Polygon>>
+ * @param getCountyOrStateData indicate whether to return data from the county service or the state service
+ * @returns Promise<Array<types.PopulationDataRequest>
  */
-export const getHousingData: (countyFIPS?: string, geometry?: types.PointGeometryQueryParameters, token?: string) => Promise<types.Point | types.Polygon | types.Polyline | types.PopulationDataRequest>
- = (countyFIPS?: string, geometry?: types.PointGeometryQueryParameters, token?: string): Promise<types.Point | types.Polygon | types.Polyline | types.PopulationDataRequest> => {
-    return new Promise((resolve, reject) => {
-        let url: string;
-        if (countyFIPS && !geometry) {
-            url = generateUrlParams(
-                config.populationServiceUrl,
+export const getPopulationDataByGeometry: (geometry: types.PointGeometryQueryParameters, getCountyOrStateData: 'county' | 'state') => Promise<Array<types.PopulationDataRequest>> = (geometry: types.PointGeometryQueryParameters, getCountyOrStateData: 'county' | 'state') => {
+    return new Promise<Array<types.PopulationDataRequest>>((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
                 {
-                    where: `${config.fipsCodeFieldName} = ${countyFIPS}`,
-                    outFields: config.housingFields,
-                    token: token ? token : ''
-                }
-            );
-        }
-        else if (!countyFIPS && geometry) {
-            url = generateUrlParams(
-                config.populationServiceUrl,
-                {
-                    outFields: config.housingFields,
+                    outFields: [config.populationFields],
                     spatialReferenceWkid: geometry.spatialReference,
                     geometry: `${geometry.x}, ${geometry.y}`,
                     geometryType: "esriGeometryPoint",
-                    token: token ? token : ''
+                    returnGeometry: false
                 }
-            );
-        }
-        else {
-            reject('No FIPS code or geometry was provided.');
-            return;
-        }
-        executeQuery(url, true, resolve, reject);
+            ), true, resolve, reject);
+    });
+}
+
+/**
+ * Retrieves housing data for a specific county based on a provided FIPS code
+ * @param countyFIPS The FIPS code for a specific county to return data for
+ * @param getCountyOrStateData indicate whether to return data from the county service or the state service
+ * @returns Promise<Array<types.PopulationDataRequest>
+ */
+export const getHousingDataByGeoId: (geoId: string, getCountyOrStateData: 'county' | 'state') => Promise<Array<types.HousingDataRequest>> = (geoId: string, getCountyOrStateData: 'county' | 'state') => {
+    return new Promise<Array<types.HousingDataRequest>>((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                {
+                    outFields: [config.housingFields],
+                    where: `${config.geoIdFieldName} = '${geoId}'`,
+                    returnGeometry: false
+                }
+            ),
+            true, resolve, reject
+        );
+    });
+}
+
+/**
+ * Retrieves housing data for a specific county based on a provided Point geometry
+ * @param geometry The geometry used to query for a feature to return data for
+ * @param getCountyOrStateData indicate whether to return data from the county service or the state service
+ * @returns Promise<Array<types.PopulationDataRequest>
+ */
+export const getHousingDataByGeometry: (geometry: types.PointGeometryQueryParameters, getCountyOrStateData: 'county' | 'state') => Promise<Array<types.HousingDataRequest>> = (geometry: types.PointGeometryQueryParameters, getCountyOrStateData: 'county' | 'state') => {
+    return new Promise<Array<types.HousingDataRequest>>((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                {
+                    outFields: [config.housingFields],
+                    spatialReferenceWkid: geometry.spatialReference,
+                    geometry: `${geometry.x}, ${geometry.y}`,
+                    geometryType: "esriGeometryPoint",
+                    returnGeometry: false
+                }
+            ), true, resolve, reject);
     });
 }
 
@@ -173,9 +253,9 @@ export const getWaterAndLandArea = (countyFIPS?: string, geometry?: { spatialRef
         let url: string;
         if (countyFIPS && !geometry) {
             url = generateUrlParams(
-                config.populationServiceUrl,
+                config.countyPopulationServiceUrl,
                 {
-                    where: `${config.fipsCodeFieldName} = ${countyFIPS}`,
+                    where: `${config.geoIdFieldName} = ${countyFIPS}`,
                     outFields: config.waterAndAreaFields,
                     token: token ? token : ''
                 }
@@ -183,7 +263,7 @@ export const getWaterAndLandArea = (countyFIPS?: string, geometry?: { spatialRef
         }
         else if (!countyFIPS && geometry) {
             url = generateUrlParams(
-                config.populationServiceUrl,
+                config.countyPopulationServiceUrl,
                 {
                     outFields: config.waterAndAreaFields,
                     spatialReferenceWkid: geometry.spatialReference,
@@ -204,16 +284,17 @@ export const getWaterAndLandArea = (countyFIPS?: string, geometry?: { spatialRef
 /**
  * Retrieves a county FIPS code for a given point's geometry
  * @param geometry The geometry used to query for a feature to return data for
+ * @param getCountyOrStateData indicate whether to return data from the county service or the state service
  * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's FIPS code
  */
-export const getCountyFipsCodeByGeometry: (geometry: types.PointGeometryQueryParameters) => Promise<types.GetFipsRequest>
-    = (geometry: types.PointGeometryQueryParameters) => {
-        return new Promise<types.GetFipsRequest>((resolve, reject) => {
+export const getGeoIdByGeometry: (geometry: types.PointGeometryQueryParameters, getCountyOrStateData: 'county' | 'state') => Promise<Array<types.GetFipsRequest>>
+    = (geometry: types.PointGeometryQueryParameters, getCountyOrStateData: 'county' | 'state') => {
+        return new Promise<Array<types.GetFipsRequest>>((resolve, reject) => {
             executeQuery(
                 generateUrlParams(
-                    config.populationServiceUrl,
+                    getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
                     {
-                        outFields: [config.fipsCodeFieldName],
+                        outFields: [config.geoIdFieldName],
                         spatialReferenceWkid: geometry.spatialReference,
                         geometry: `${geometry.x}, ${geometry.y}`,
                         geometryType: "esriGeometryPoint",
@@ -225,17 +306,18 @@ export const getCountyFipsCodeByGeometry: (geometry: types.PointGeometryQueryPar
 
 /**
  * Retrieves drought level population data for a feature based on a given county FIPS code
- * @param fipsCode the FIPS code of the county
+ * @param geoId the Geo ID code of the area
+ * @param getCountyOrStateData indicate whether to return data from the county service or the state service
  * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's population drought level data
  */
-export const getPopulationDroughtLevelsByCountyFips: (fipsCode: string) => Promise<types.DroughtPopRequest> = (fipsCode: string) => {
-    return new Promise<types.DroughtPopRequest>((resolve, reject) => {
+export const getPopulationDroughtLevelsByGeoId: (geoId: string, getCountyOrStateData: 'county' | 'state') => Promise<Array<types.DroughtPopRequest>> = (fipsCode: string, getCountyOrStateData: 'county' | 'state') => {
+    return new Promise<Array<types.DroughtPopRequest>>((resolve, reject) => {
         executeQuery(
             generateUrlParams(
-                config.populationServiceUrl,
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
                 {
                     outFields: [config.populationDroughtFields],
-                    where: `${config.fipsCodeFieldName} = '${fipsCode}'`,
+                    where: `${config.geoIdFieldName} = '${fipsCode}'`,
                     returnGeometry: false
                 }
             ),
@@ -246,17 +328,18 @@ export const getPopulationDroughtLevelsByCountyFips: (fipsCode: string) => Promi
 
 /**
  * Retrieves drought level housing data for a feature based on a given county FIPS code
- * @param fipsCode the FIPS code of the county
+ * @param geoId the Geo ID code of the area
+ * @param getCountyOrStateData indicate whether to return data from the county service or the state service
  * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's housing drought level data
  */
-export const getHousingDroughtLevelsByCountyFips: (fipsCode: string) => Promise<types.DroughtHousingRequest> = (fipsCode: string) => {
-    return new Promise<types.DroughtHousingRequest>((resolve, reject) => {
+export const getHousingDroughtLevelsByGeoId: (geoId: string, getCountyOrStateData: 'county' | 'state') => Promise<Array<types.DroughtHousingRequest>> = (fipsCode: string, getCountyOrStateData: 'county' | 'state') => {
+    return new Promise<Array<types.DroughtHousingRequest>>((resolve, reject) => {
         executeQuery(
             generateUrlParams(
-                config.populationServiceUrl,
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
                 {
                     outFields: [config.housingDroughtFields],
-                    where: `${config.fipsCodeFieldName} = '${fipsCode}'`,
+                    where: `${config.geoIdFieldName} = '${fipsCode}'`,
                     returnGeometry: false
                 }
             ),
@@ -271,11 +354,11 @@ export const getHousingDroughtLevelsByCountyFips: (fipsCode: string) => Promise<
  * @returns Promise<Array<types.Point | types.Feature | types.Polygon>> containing a returned feature's county and state name
  */
 export const getCountyAndStateName: (geometry: PointGeometryQueryParameters)
-    => Promise<types.CountyAndStateRequest> = (geometry: PointGeometryQueryParameters) => {
-        return new Promise<types.CountyAndStateRequest>((resolve, reject) => {
+    => Promise<Array<types.CountyAndStateRequest>> = (geometry: PointGeometryQueryParameters) => {
+        return new Promise<Array<types.CountyAndStateRequest>>((resolve, reject) => {
             executeQuery(
                 generateUrlParams(
-                    config.populationServiceUrl,
+                    config.countyPopulationServiceUrl,
                     {
                         outFields: config.stateAndCountyFieldNames,
                         spatialReferenceWkid: geometry.spatialReference,

@@ -1,11 +1,18 @@
 {
-    "populationServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/aware_support_view1/FeatureServer/1",
+    "countyPopulationServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Drought_Aware_Support_view_2/FeatureServer/0",
+    "statePopulationServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Drought_Aware_Support_view_2/FeatureServer/1",
     "droughtServiceUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/3",
     "indicatorServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/aware_support_view1/FeatureServer/0",
     "graceTableServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/aware_support_view1/FeatureServer/2",
     "populationServiceObjectIdField": "OBJECTID",
     "awareIdFieldName": "Aware_ID",
-    "fipsCodeFieldName": "GEOID",
+    "geoIdFieldName": "GEOID",
+    "idInformationOutFields": [
+        "NAME",
+        "State",
+        "GEOID",
+        "OBJECTID"
+    ],
     "stateAndCountyFieldNames": [
         "NAME",
         "State"
@@ -23,7 +30,17 @@
         "P0010001_D4",
         "P0010001_Dx",
         "P0020002_Dx",
-        "P0020003_Dx"
+        "P0020003_Dx",
+        "P0020002_D0",
+        "P0020003_D0",
+        "P0020002_D1",
+        "P0020003_D1",
+        "P0020002_D2",
+        "P0020003_D2",
+        "P0020002_D3",
+        "P0020003_D3",
+        "P0020002_D4",
+        "P0020003_D4"
     ],
     "housingFields": [
         "H0010001"
@@ -34,7 +51,17 @@
         "H0010001_D3",
         "H0010001_D2",
         "H0010001_D1",
-        "H0010001_D0"
+        "H0010001_D0",
+        "H0020002_D0",
+        "H0020003_D0",
+        "H0020002_D1",
+        "H0020003_D1",
+        "H0020002_D2",
+        "H0020003_D2",
+        "H0020002_D3",
+        "H0020003_D3",
+        "H0020002_D4",
+        "H0020003_D4"
     ],
     "waterAndAreaFields": [
         "ALAND",

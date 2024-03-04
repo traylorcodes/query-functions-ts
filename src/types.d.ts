@@ -49,14 +49,14 @@ export type PointGeometryQueryParameters = {
 
 
 // the format that the function returns data in
-export type CountyAndStateRequest = Array<{
+export type CountyAndStateRequest = {
     NAME: string,
     State: string,
-}>;
+};
 
-export type GetFipsRequest = Array<{GEOID: string}>;
+export type GetFipsRequest = {GEOID: string};
 
-export type DroughtPopRequest = Array<{
+export type DroughtPopRequest = {
     P0010001_D0: number,
     P0010001_D1: number,
     P0010001_D2: number,
@@ -65,23 +65,23 @@ export type DroughtPopRequest = Array<{
     P0010001_Dx: number,
     P0020002_Dx: number,
     P0020003_Dx: number,
-}>;
+};
 
-export type DroughtHousingRequest = Array<{
+export type DroughtHousingRequest = {
     H0010001_Dx: number,
     H0010001_D4: number,
     H0010001_D3: number,
     H0010001_D2: number,
     H0010001_D1: number,
     H0010001_D0: number,
-}>;
+};
 
-export type PopulationDataRequest = Array<{
+export type PopulationDataRequest = {
     P0010001: number,
     P0020002: number,
     P0020003: number,
-}>;
+};
 
-export type HousingDataRequest = Array<{
+export type HousingDataRequest = {
     H0010001: number,
-}>;
+};
