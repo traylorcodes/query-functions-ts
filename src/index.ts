@@ -20,19 +20,36 @@ export type PointGeometryQueryParameters = types.PointGeometryQueryParameters;
  * @returns a URL that can be used to perform a query
  */
 const generateUrlParams = (serviceUrl: string, options: any, queryingRelatedFeatures?: boolean): string => {
+    let url: string = serviceUrl + (queryingRelatedFeatures ? '/queryRelatedRecords?' : '/query?');
+
     // replace where clause with 1=1 if it is null
     if (!options.where) {
         options.where = '1=1';
     }
-    // replace outFields with ['*'] if it is null
-    if (!options.outFields) {
-        options.outFields = ['*'];
+
+    let outFieldsParam: string = '';
+    if (options.outFields) {
+        outFieldsParam = `&outFields=${options.outFields.join('%2C+')}`;
+        delete options.outFields;
     }
 
-    return serviceUrl + (queryingRelatedFeatures ? '/queryRelatedFeatures?' : '/query?') + new URLSearchParams({
+    return serviceUrl + (queryingRelatedFeatures ? '/queryRelatedRecords?' : '/query?') + new URLSearchParams({
         ...options,
         f: 'json'
-    }).toString();
+    }).toString() + outFieldsParam;
+
+    // // replace outFields with ['*'] if it is null
+    // if (!options.outFields) {
+    //     options.outFields = ['*'];
+    // }
+    // if (options.outFields.length > 1) {
+    //     // options.outFields = options.outFields.join(`%2C+`);
+    // }
+
+    // return serviceUrl + (queryingRelatedFeatures ? '/queryRelatedFeatures?' : '/query?') + new URLSearchParams({
+    //     ...options,
+    //     f: 'json'
+    // }).toString();
 }
 
 /**
@@ -42,7 +59,7 @@ const generateUrlParams = (serviceUrl: string, options: any, queryingRelatedFeat
  * @param { (reason?: any) => void } reject The reject function to complete a failed request
  * @returns void
  */
-function executeQuery(url: string, returnAttributesOnly: boolean, resolve: (value: any) => void, reject: (reason?: any) => void) {
+function executeQuery(url: string, returnAttributesOnly: boolean, resolve: (value: any) => void, reject: (reason?: any) => void, queryingRelatedFeatures?: boolean) {
     fetch(url)
         .then((response) => {
             response.json().then((data) => {
@@ -51,20 +68,27 @@ function executeQuery(url: string, returnAttributesOnly: boolean, resolve: (valu
                     // reject(url)
                     return;
                 }
-                // console.log('data', data);
                 const temp: any = [];
-                data.features.forEach((feature: types.Point | types.Polygon | types.Polyline) => {
-                    if (returnAttributesOnly) {
-                        temp.push(feature.attributes)
-                    }
-                    else temp.push(
-                        {
-                            attributes: feature.attributes,
-                            spatialReferenceWkid: data.spatialReference.wkid ?? null,
-                            geometry: feature.geometry ?? null
+                if (queryingRelatedFeatures) {
+                    data.relatedRecordGroups[0].relatedRecords.forEach((feature: any) => {
+                        temp.push(feature.attributes);
+                    });
+                }
+                // console.log('data', data);
+                else {
+                    data.features.forEach((feature: types.Point | types.Polygon | types.Polyline) => {
+                        if (returnAttributesOnly) {
+                            temp.push(feature.attributes)
                         }
-                    );
-                });
+                        else temp.push(
+                            {
+                                attributes: feature.attributes,
+                                spatialReferenceWkid: data.spatialReference.wkid ?? null,
+                                geometry: feature.geometry ?? null
+                            }
+                        );
+                    });
+                }
                 resolve(temp);
                 // resolve(data);
             })
@@ -99,59 +123,90 @@ function executeQuery(url: string, returnAttributesOnly: boolean, resolve: (valu
 
 //     }
 
-    export const getPopulationHistory: any = (getCountyOrStateData: 'county' | 'state', objectId: number, relationshipId: number) => {
-        return new Promise((resolve, reject) => {
-            executeQuery(
-                generateUrlParams(
-                    getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
-                    {
-                        outFields: ['*'],
-                        objectIds: [objectId],
-                        relationshipId: relationshipId,
-                        returnGeometry: false
-                    },
-                    true
-                )
-           ,true, resolve, reject )
-        });
-    }
+export const getDroughtHistory: any = (getCountyOrStateData: 'county' | 'state', objectId: number) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                {
+                    outFields: ['*'],
+                    objectIds: [objectId],
+                    relationshipId: getCountyOrStateData === 'county' ? config.countyTableRelationshipId : config.stateTableRelationshipId,
+                    returnGeometry: false
+                },
+                true
+            )
+            , true, resolve, reject, true)
+    });
+}
 
-    export const getFeaturePopulationData: any = (getCountyOrStateData: 'county' | 'state') => {
-        return new Promise((resolve, reject) => {
-            executeQuery(
-                generateUrlParams(
-                    getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
-                    {
-                      outFields: [config.populationFields.join('%2C+')],
-                      returnGeometry: false,
-                    }
-                ),
-                true, resolve, reject)
-        });
-    };
 
-    // returns NAME, State, GEOID, OBJECTID
-    export const getIdInformationFromGeometry: any = (getCountyOrStateData: 'county' | 'state', geometry: {x: number, y: number, spatialReference: number}) => {
-        return new Promise((resolve, reject) => {
-            executeQuery(
-                generateUrlParams(
-                    getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
-                    {
-                        outFields: config.idInformationOutFields.join('%2C+'),
-                        spatialReferenceWkid: geometry.spatialReference,
-                        geometry: `${geometry.x}, ${geometry.y}`,
-                        geometryType: "esriGeometryPoint",
-                        returnGeometry: false,
-                    }
-                ),
-                true, resolve, reject)
-        });
-    }
+export const getFeatureHousingDataFromGeoId: any = (getCountyOrStateData: 'county' | 'state', geoId: string) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                {
+                    where: `${config.geoIdFieldName} = '${geoId}'`,
+                    outFields: [config.housingFields],
+                    returnGeometry: false,
+                }
+            ),
+            true, resolve, reject)
+    });
+};
+
+export const getFeaturePopulationDataFromGeoId: any = (getCountyOrStateData: 'county' | 'state', geoId: string) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                {
+                    where: `${config.geoIdFieldName} = '${geoId}'`,
+                    outFields: [config.populationFields],
+                    returnGeometry: false,
+                }
+            ),
+            true, resolve, reject)
+    });
+};
+
+
+// provide a point geometry to it and whether to retrieve county or state data, and will pass back the configured outfields
+export const getIdInformationFromGeometry: any = (getCountyOrStateData: 'county' | 'state', geometry: { x: number, y: number, spatialReference: number }) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                {
+                    outFields: getCountyOrStateData === 'county' ? config.countyIdInformationOutFields : config.stateIdInformationOutFields,
+                    spatialReferenceWkid: geometry.spatialReference,
+                    geometry: `${geometry.x}, ${geometry.y}`,
+                    geometryType: "esriGeometryPoint",
+                    returnGeometry: false,
+                }
+            ),
+            true, resolve, reject)
+    });
+}
 
 // object id, the county geo id, p1, p2, p3, h1, name, state
 // take object id and query related features using so
 
 // question: when do you generate the url parameters??
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Retrieves population data for a specific county or state based on a provided FIPS code or GEOID

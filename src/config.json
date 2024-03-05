@@ -7,12 +7,21 @@
     "populationServiceObjectIdField": "OBJECTID",
     "awareIdFieldName": "Aware_ID",
     "geoIdFieldName": "GEOID",
-    "idInformationOutFields": [
+    "countyIdInformationOutFields": [
         "NAME",
         "State",
         "GEOID",
         "OBJECTID"
     ],
+    "countyTableRelationshipId": 0,
+    "stateIdInformationOutFields": [
+        "OBJECTID",
+        "NAME",
+        "STUSPS",
+        "GEOID",
+        "STATENS"
+    ],
+    "stateTableRelationshipId": 1,
     "stateAndCountyFieldNames": [
         "NAME",
         "State"
@@ -23,45 +32,35 @@
         "P0020003"
     ],
     "populationDroughtFields": [
-        "P0010001_D0",
-        "P0010001_D1",
-        "P0010001_D2",
-        "P0010001_D3",
-        "P0010001_D4",
         "P0010001_Dx",
+        "P0010001_D4",
+        "P0010001_D3",
+        "P0010001_D2",
+        "P0010001_D1",
+        "P0010001_D0",
         "P0020002_Dx",
         "P0020003_Dx",
-        "P0020002_D0",
-        "P0020003_D0",
-        "P0020002_D1",
-        "P0020003_D1",
-        "P0020002_D2",
-        "P0020003_D2",
+        "P0020002_D4",
+        "P0020003_D4",
         "P0020002_D3",
         "P0020003_D3",
-        "P0020002_D4",
-        "P0020003_D4"
+        "P0020002_D2",
+        "P0020003_D2",
+        "P0020002_D1",
+        "P0020003_D1",
+        "P0020002_D0",
+        "P0020003_D0"
     ],
     "housingFields": [
         "H0010001"
     ],
     "housingDroughtFields": [
-        "H0010001_Dx",
-        "H0010001_D4",
-        "H0010001_D3",
-        "H0010001_D2",
-        "H0010001_D1",
-        "H0010001_D0",
-        "H0020002_D0",
-        "H0020003_D0",
-        "H0020002_D1",
-        "H0020003_D1",
-        "H0020002_D2",
-        "H0020003_D2",
-        "H0020002_D3",
-        "H0020003_D3",
-        "H0020002_D4",
-        "H0020003_D4"
+       "H0010001_Dx",
+       "H0010001_D4",
+       "H0010001_D3",
+       "H0010001_D2",
+       "H0010001_D1",
+       "H0010001_D0"
     ],
     "waterAndAreaFields": [
         "ALAND",
