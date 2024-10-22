@@ -17,11 +17,15 @@ To use this library, install it in your application using the command
 Generates a URL parameter string to use for querying a service
 
 Parameters:
+
 **serviceUrl**: The url of the service being queried.
+
 **options**: A data object of key and value pairs to append as parameters on the url.
+
 **queryingRelatedFeatures**: Optional. Indicate if the url directory should include "/queryRelatedFeatures" for a related query.
 
 Returns an array of objects containing the key value pairs:
+
 - **return**: string - a string of the complete URL with the appended parameters to execute a query on.
 ---
 
