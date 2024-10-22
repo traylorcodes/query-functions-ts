@@ -72,8 +72,8 @@ Retrieve the drought level data for either the entire nation, a county, or a sta
 
 Parameters:
 
-**featureCategory**: Indicate what area type the query is for, and use the proper feature service.
-**parameter**: The ID of the feature to find. Identifying field is determined by featureCategory.
+- **featureCategory**: Indicate what area type the query is for, and use the proper feature service.
+- **id**: Optional. The ID of the feature to find. Identifying field is determined by featureCategory. If no ID is provided, the national service is queried.
 
 
 Returns an array of objects containing the key value pairs:
@@ -87,14 +87,21 @@ Retrieve data for a feature from an ACS population service. A feature is found b
 
 Parameters:
 
-**getCountyOrStateData**: Indicate whether to use the county or state feature service.
-**geometry**: The input geometry to query for features with.
-**returnIdInformationData**: Indicate whether or not to return identifying information (such as a FIPS code).
-**returnPopulationData**: Indicate whether or not to return configured population output fields.
-**returnHousingData**: Indicate whether or not to return configured housing fields.
-**returnAgricultureData**: Indicate whether or not to return configured agriculture fields.
-**returnEconomicImpactData**: Indicate whether or not to return configured economic fields.
-**getAgriValue**: Indicate whether or not to return the configured agricultural value field.
+- **getCountyOrStateData**: Indicate whether to use the county or state feature service.
+
+- **geometry**: The input geometry to query for features with.
+
+- **returnIdInformationData**: Indicate whether or not to return identifying information (such as a FIPS code).
+
+- **returnPopulationData**: Indicate whether or not to return configured population output fields.
+
+- **returnHousingData**: Indicate whether or not to return configured housing fields.
+
+- **returnAgricultureData**: Indicate whether or not to return configured agriculture fields.
+
+- **returnEconomicImpactData**: Indicate whether or not to return configured economic fields.
+
+- **getAgriValue**: Indicate whether or not to return the configured agricultural value field.
 
 
 Returns an array of objects containing the key value pairs:
@@ -108,8 +115,9 @@ Retrieve the historical population data for a certain area.
 
 Parameters:
 
-**getCountyOrStateMode**: Indicate whether to retrieve data from the county table service or the state table service.
-**objectId**: The object ID of the related ACS layer feature to query for table data.
+- **getCountyOrStateMode**: Indicate whether to retrieve data from the county table service or the state table service.
+
+- **objectId**: The object ID of the related ACS layer feature to query for table data.
 
 
 Returns an array of objects containing the key value pairs:
@@ -123,8 +131,9 @@ Retrieve the historical agriculture data for a certain area.
 
 Parameters:
 
-**getCountyOrStateMode**: Indicate whether to retrieve data from the county table service or the state table service.
-**objectId**: The object ID of the related ACS layer feature to query for table data.
+- **getCountyOrStateMode**: Indicate whether to retrieve data from the county table service or the state table service.
+
+- **objectId**: The object ID of the related ACS layer feature to query for table data.
 
 
 Returns an array of objects containing the key value pairs:
@@ -138,7 +147,7 @@ Retrieve feature data from the HUC-4 service using an input point geometry.
 
 Parameters:
 
-**geometry**: The input point geometry.
+- **geometry**: The input point geometry.
 
 
 Returns an array of objects containing the key value pairs:
@@ -150,7 +159,7 @@ Retrieve data for major rivers in a given HUC-4 watershed boundary identified by
 
 Parameters:
 
-**huc4ID**: The HUC-4 ID for the watershed to find rivers in.
+- **huc4ID**: The HUC-4 ID for the watershed to find rivers in.
 
 
 Returns an array of objects containing the key value pairs:
@@ -162,7 +171,7 @@ Retrieve the history of flow readings for each of the rivers found in a given HU
 
 Parameters:
 
-**featureID**: the featureID field value of a river feature from the flowlines feature service.
+- **featureID**: the featureID field value of a river feature from the flowlines feature service.
 
 
 Returns an array of objects containing the key value pairs:
@@ -174,7 +183,7 @@ Retrieve an array of the reservoirs found along the major rivers of a HUC-4 wate
 
 Parameters:
 
-**huc4ID**: The HUC-4 ID for the given watershed to find reservoirs for rivers in.
+- **huc4ID**: The HUC-4 ID for the given watershed to find reservoirs for rivers in.
 
 
 Returns an array of objects containing the key value pairs:
