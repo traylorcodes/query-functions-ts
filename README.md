@@ -16,7 +16,7 @@ To use this library, install it in your application using the command
 
 ### generateUrlParams
 
-Generates a URL parameter string to use for querying a service
+Generates a URL parameter string to use for querying a service.
 
 Parameters:
 

@@ -1,6 +1,6 @@
 {
   "name": "query-functions-ts",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Querying Functions for use in the Living Atlas team's applications",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
