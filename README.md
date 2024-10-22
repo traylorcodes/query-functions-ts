@@ -4,147 +4,49 @@
 To use this library, install it in your application using the command
  ```npm i query-functions-ts```
 
-## Available Functions
+ This module contains the querying functions used to retrieve data in the 2024 Esri Living Atlas Drought Aware application.
 
-### getPopulationData
-Retrieves population data for a specific county. Can be used to find a specific county by FIPS code or a point geometry to find a feature to return data for. Either a county FIPS code or a geometry must be provided for this function to retrieve data.
+ The functions retrieve data from a variety of feature services that may be reusable in multiple applications. Below is a list of functions and the data that is retrieved.
 
-Currently consumes 3 parameters:
+# Available Functions
 
-**countyFIPS**: a string value of a county FIPS code to retrieve population data for.
+## Utility
 
-**geometry**: An object containing geometry information to query with. The object should contain:
-- **spatialReference**: a numerical value of a Spatial Reference Wkid
-- **x**: a numerical x value number
-- **y**: a numerical y value number
+### generateUrlParams
 
-**token**: An optional token to provide for use with services that are protected.
+Generates a URL parameter string to use for querying a service
 
+Parameters:
+**serviceUrl**: The url of the service being queried.
+**options**: A data object of key and value pairs to append as parameters on the url.
+**queryingRelatedFeatures**: Optional. Indicate if the url directory should include "/queryRelatedFeatures" for a related query.
 
 Returns an array of objects containing the key value pairs:
-- **P0010001**: number - The total population within a county
-- **P0020002**: number - The total urban population within a county
-- **P0020003**: number - The total rural population within a county
-
-```ts
-import { getPopulationData } from 'query-functions-ts'
-
-// get population data by providing a county FIPS code
-getPopulationData('27137', undefined, token)
-.then((response) => {
-    // handleResponse(response);
-})
-.catch((e) => {
-    // handleError(e);
-});
-
-// get population data by providing a geometry
-getPopulationData(undefined,
- {
-    spatialReference: 102100,
-    x: -10261987.88099638,
-    y: 5903130.124037775
- },
-  token)
-.then((response) => {
-    // handleResponse(response);
-})
-.catch((e) => {
-    // handleError(e);
-});
-```
+- **return**: string - a string of the complete URL with the appended parameters to execute a query on.
 ---
 
-### getHousingData
-Retrieves housing data for a specific county. Can be used to find a specific county by FIPS code or a point geometry to find a feature to return data for. Either a county FIPS code or a geometry must be provided for this function to retrieve data.
+### executeQuery
+Resolves or rejects a Promise by attempting to query with the URL created by the generateUrlParams function.
 
-Currently consumes 3 parameters:
-
-**countyFIPS**: a string value of a county FIPS code to retrieve housing data for.
-
-**geometry**: An object containing geometry information to query with. The object should contain:
-- **spatialReference**: a numerical value of a Spatial Reference Wkid
-- **x**: a numerical x value number
-- **y**: a numerical y value number
-
-**token**: An optional token to provide for use with services that are protected.
-
+Parameters:
+**url**: The URL to query.
+**returnAttributesOnly**: Indicates whether or not to include the geometry of returned features.
+**resolve**: The Promise's resolve function.
+**reject**: The Promise's reject function.
+**queryingRelatedRecords**: Optional. Indicate whether or not this is a query for related records.
 
 Returns an array of objects containing the key value pairs:
-- **H0010001**: number - The total amount of housing units within a county
-
-```ts
-import { getHousingData } from 'query-functions-ts'
-
-// get population data by providing a county FIPS code
-getHousingData('27137', undefined, token)
-.then((response) => {
-    // handleResponse(response);
-})
-.catch((e) => {
-    // handleError(e);
-});
-
-// get population data by providing a geometry
-getHousingData(undefined,
- {
-    spatialReference: 102100,
-    x: -10261987.88099638,
-    y: 5903130.124037775
- },
-  token)
-.then((response) => {
-    // handleResponse(response);
-})
-.catch((e) => {
-    // handleError(e);
-});
-```
+- **return**: void
 ---
 
-### getWaterAndLandArea
-Retrieves water and land area data for a specific county. Can be used to find a specific county by FIPS code or a point geometry to find a feature to return data for. Either a county FIPS code or a geometry must be provided for this function to retrieve data.
+Further documentation of the following categories will be released in the near future:
 
-Currently consumes 3 parameters:
+## Drought
 
-**countyFIPS**: a string value of a county FIPS code to retrieve land and water area data for.
+## ACS
 
-**geometry**: An object containing geometry information to query with. The object should contain:
-- **spatialReference**: a numerical value of a Spatial Reference Wkid
-- **x**: a numerical x value number
-- **y**: a numerical y value number
+## Population
 
-**token**: An optional token to provide for use with services that are protected.
+## Agriculture
 
-
-Returns an array of objects containing the key value pairs:
-- **ALAND**: number - The surface area (square meters) of land within a county
-- **AWATER**: number - The surface area (square meters) of water within a county
-
-```ts
-import { getWaterAndLandArea } from 'query-functions-ts'
-
-// get population data by providing a county FIPS code
-getWaterAndLandArea('27137', undefined, token)
-.then((response) => {
-    // handleResponse(response);
-})
-.catch((e) => {
-    // handleError(e);
-});
-
-// get population data by providing a geometry
-getWaterAndLandArea(undefined,
- {
-    spatialReference: 102100,
-    x: -10261987.88099638,
-    y: 5903130.124037775
- },
-  token)
-.then((response) => {
-    // handleResponse(response);
-})
-.catch((e) => {
-    // handleError(e);
-});
-```
+## Hydrological

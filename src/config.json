@@ -1,9 +1,99 @@
 {
-    "countyPopulationServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Drought_Aware_Support_view_2/FeatureServer/0",
-    "statePopulationServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Drought_Aware_Support_view_2/FeatureServer/1",
-    "droughtServiceUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/3",
-    "indicatorServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/aware_support_view1/FeatureServer/0",
-    "graceTableServiceUrl": "https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/aware_support_view1/FeatureServer/2",
+    "countyAgricultureTableUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/drought_aware_support_2024_Q3_v1/FeatureServer/6",
+    "countyDroughtServiceUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/1",
+    "countyPopulationServiceUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/drought_aware_support_2024_Q3_v1/FeatureServer/0",
+    "stateAgricultureTableUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/drought_aware_support_2024_Q3_v1/FeatureServer/7",
+    "stateDroughtServiceUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/US_Drought_Intensity_v1/FeatureServer/0",
+    "statePopulationServiceUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/drought_aware_support_2024_Q3_v1/FeatureServer/1",
+    "watershedHuc4LayerServiceUrl": "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/Watershed_Boundary_Dataset_HUC_4s/FeatureServer/0",
+    "flowlinesLayerServiceUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/drought_aware_support_2024_Q3_v1/FeatureServer/11",
+    "nidSubsetTableUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/drought_aware_support_2024_Q3_v1/FeatureServer/12",
+    "nwmFlowsTableUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/drought_aware_support_2024_Q3_v1/FeatureServer/13",
+    "waterDroughtServiceUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/drought_aware_support_2024_Q3_v1/FeatureServer/10",
+    "watershedOutFields": [
+        "OBJECTID",
+        "HUC4",
+        "NAME"
+    ],
+    "primaryRiverOutFields": [
+        "OBJECTID",
+        "huc4",
+        "feature_id",
+        "NAME",
+        "QE_01",
+        "QE_02",
+        "QE_03",
+        "QE_04",
+        "QE_05",
+        "QE_06",
+        "QE_07",
+        "QE_08",
+        "QE_09",
+        "QE_10",
+        "QE_11",
+        "QE_12"
+    ],
+    "cfsOutFields": [
+        "OBJECTID",
+        "huc4",
+        "feature_id",
+        "period",
+        "Q_CFS"
+    ],
+    "reservoirOutFields": [
+        "OBJECTID",
+        "huc4",
+        "NORMAL_STORAGE",
+        "PURPOSES"
+    ],
+    "nationalDroughtServiceUrl": "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/drought_aware_support_2024_Q3_v1/FeatureServer/9",
+    "droughtDateFieldName": "ddate",
+    "nationalAndWaterDroughtFieldName": "period_date",
+    "countyTableRelationshipId": 1,
+    "stateTableRelationshipId": 3,
+    "countyAgricultureRelationshipId": 0,
+    "stateAgricultureRelationshipId": 2,
+    "droughtLevelOutFields": [
+        "d0",
+        "d1",
+        "d2",
+        "d3",
+        "d4",
+        "D0_D4",
+        "D1_D4",
+        "D2_D4",
+        "D3_D4",
+        "nothing"
+    ],
+    "droughtLevelTimeFields": [
+        "period",
+        "ddate"
+    ],
+    "nationalDroughtLevelOutFields": [
+        "D0_D4",
+        "D1_D4",
+        "D2_D4",
+        "D3_D4",
+        "D4"
+    ],
+    "socialAndCommunityPopulationFields": [
+        "SOVI_RATNG",
+        "RESL_RATNG"
+    ],
+    "countyEconomicImpactPopulationFields": [
+        "DRGT_RISKR",
+        "DRGT_EALT",
+        "DRGT_EALR"
+    ],
+    "stateEconomicImpactPopulationFields": [
+        "DRGT_EALT"
+    ],
+    "nationalPeriodField": "period",
+    "nationalAndWaterDroughtLevelTimeFields": [
+        "period",
+        "period_date"
+    ],
+    "droughtServiceFipsFieldName": "admin_fips",
     "populationServiceObjectIdField": "OBJECTID",
     "awareIdFieldName": "Aware_ID",
     "geoIdFieldName": "GEOID",
@@ -13,15 +103,19 @@
         "GEOID",
         "OBJECTID"
     ],
-    "countyTableRelationshipId": 0,
+    "agricultureLayerFields": [
+        "CROP_TOT_SALES_IN_DOL_TOT",
+        "LBR_CON_EXP_DOL_TOT",
+        "LBR_HRD_EXP_DOL_TOT",
+        "LBR_HRD_NUMWKRS_TOT",
+        "LBR_UNPAID_NUMWKRS_TOT"
+    ],
     "stateIdInformationOutFields": [
         "OBJECTID",
         "NAME",
         "STUSPS",
-        "GEOID",
-        "STATENS"
+        "GEOID"
     ],
-    "stateTableRelationshipId": 1,
     "stateAndCountyFieldNames": [
         "NAME",
         "State"
