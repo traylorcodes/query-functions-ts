@@ -18,11 +18,12 @@ Generates a URL parameter string to use for querying a service
 
 Parameters:
 
-**serviceUrl**: The url of the service being queried.
+- **serviceUrl**: The url of the service being queried.
 
-**options**: A data object of key and value pairs to append as parameters on the url.
+- **options**: A data object of key and value pairs to append as parameters on the url.
 
-**queryingRelatedFeatures**: Optional. Indicate if the url directory should include "/queryRelatedFeatures" for a related query.
+- **queryingRelatedFeatures**: Optional. Indicate if the url directory should include "/queryRelatedFeatures" for a related query.
+
 
 Returns an array of objects containing the key value pairs:
 
@@ -33,11 +34,18 @@ Returns an array of objects containing the key value pairs:
 Resolves or rejects a Promise by attempting to query with the URL created by the generateUrlParams function.
 
 Parameters:
-**url**: The URL to query.
-**returnAttributesOnly**: Indicates whether or not to include the geometry of returned features.
-**resolve**: The Promise's resolve function.
-**reject**: The Promise's reject function.
-**queryingRelatedRecords**: Optional. Indicate whether or not this is a query for related records.
+
+- **url**: The URL to query.
+
+- **returnAttributesOnly**: Indicates whether or not to include the geometry of returned features.
+
+- **resolve**: The Promise's resolve function.
+
+- **reject**: The Promise's reject function.
+
+- **queryingRelatedRecords**: Optional. Indicate whether or not this is a query for related records.
+
+
 
 Returns an array of objects containing the key value pairs:
 - **return**: void
