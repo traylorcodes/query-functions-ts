@@ -76,6 +76,28 @@ function executeQuery(url: string, returnAttributesOnly: boolean, resolve: (valu
         });
 }
 
+export const retrieveACSEmergencyBoundaryCountyData: (geometry: PointGeometryQueryParameters) => Promise<any> = (geometry: PointGeometryQueryParameters) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                'https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/ACS_Highlights_Emergency_Response_Boundaries/FeatureServer/1',
+                {
+                    outFields: ['*'
+                    ],
+                    geometry: `{"x": ${geometry.x},"y": ${geometry.y},"spatialReference": {"wkid": ${geometry.spatialReference}}}`,
+                    inSR: geometry.spatialReference,
+                    outSR: 4326,
+                    geometryType: 'esriGeometryPoint',
+                    returnGeometry: true,
+                    geometryPrecision: 4,
+                    resultType: 'tile',
+                    cacheHint: true,
+                }
+            )
+            , false, resolve, reject)
+    });
+}
+
 export const retrieveListOfNationalDroughtLevelPeriods: any = () => {
     return new Promise((resolve, reject) => {
         executeQuery(
