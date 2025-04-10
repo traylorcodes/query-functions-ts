@@ -238,7 +238,7 @@ export const getHuc4WatershedData: (
                 {
                     geometry: `{"x": ${geometry.x.toPrecision(6)},"y": ${geometry.y.toPrecision(6)},"spatialReference": {"wkid": ${geometry.spatialReference}}}`,
                     inSR: geometry.spatialReference,
-                    outFields: ['*'],
+                    outFields: ['objectid', 'huc4 as HUC4', 'name as NAME'],
                     outSR: 4326,
                     geometryType: 'esriGeometryPoint',
                     returnGeometry: true,
