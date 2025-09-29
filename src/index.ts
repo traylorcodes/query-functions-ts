@@ -79,7 +79,6 @@ function executeQuery(url: string, returnAttributesOnly: boolean, resolve: (valu
         });
 }
 
-
 // retrieve the last data edit date for the wind gust layer
 export const getWindGustLayerEditingInfo: () => Promise<number> = async () => {
     try {
@@ -91,13 +90,62 @@ export const getWindGustLayerEditingInfo: () => Promise<number> = async () => {
             }
             throw (new Error('The Wind Gust Layer JSON request was successful but the data last edit date could not be retrieved'));
         }
-        throw (new Error('The Wind Gust Layer Layer JSON request could not be successfully read'));
+        throw (new Error('The Wind Gust Layer JSON request could not be successfully read'));
     } catch (e) {
         throw (e);
     }
 }
 
+// retrieve the last data edit date for the wind speed layer
+export const getWindSpeedLayerEditingInfo: () => Promise<number> = async () => {
+    try {
+        const response = await fetch('https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NDFD_WindSpeed_v1/FeatureServer/0?f=json&cacheHint=true');
+        if (response) {
+            const json = await response.json();
+            if (json && json.editingInfo && json.editingInfo.dataLastEditDate && !isNaN(json.editingInfo.dataLastEditDate)) {
+                return parseInt(json.editingInfo.dataLastEditDate);
+            }
+            throw (new Error('The Wind Speed Layer JSON request was successful but the data last edit date could not be retrieved'));
+        }
+        throw (new Error('The Wind Speed Layer JSON request could not be successfully read'));
+    } catch (e) {
+        throw (e);
+    }
+}
 
+// retrieve the last data edit date for the accumulated precipitation layer
+export const getAccumulatedPrecipitationLayerEditingInfo: () => Promise<number> = async () => {
+    try {
+        const response = await fetch('https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NDFD_Precipitation_v1/FeatureServer/1?f=json&cacheHint=true');
+        if (response) {
+            const json = await response.json();
+            if (json && json.editingInfo && json.editingInfo.dataLastEditDate && !isNaN(json.editingInfo.dataLastEditDate)) {
+                return parseInt(json.editingInfo.dataLastEditDate);
+            }
+            throw (new Error('The Accumulated Precipitation JSON request was successful but the data last edit date could not be retrieved'));
+        }
+        throw (new Error('The Accumulated Precipitation Layer JSON request could not be successfully read'));
+    } catch (e) {
+        throw (e);
+    }
+}
+
+// retrieve the last data edit date for the amount by time precipitaion layer layer
+export const getAmountByTimePrecipitationLayerEditingInfo: () => Promise<number> = async () => {
+    try {
+        const response = await fetch('https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NDFD_Precipitation_v1/FeatureServer/0?f=json&cacheHint=true');
+        if (response) {
+            const json = await response.json();
+            if (json && json.editingInfo && json.editingInfo.dataLastEditDate && !isNaN(json.editingInfo.dataLastEditDate)) {
+                return parseInt(json.editingInfo.dataLastEditDate);
+            }
+            throw (new Error('The Amount By Time Precipitation Layer JSON request was successful but the data last edit date could not be retrieved'));
+        }
+        throw (new Error('The Amount By Time Precipitation Layer JSON request could not be successfully read'));
+    } catch (e) {
+        throw (e);
+    }
+}
 
 export const reverseGeocodePoint: (geometry: PointGeometryQueryParameters) => Promise<any> = (geometry: PointGeometryQueryParameters) => {
     return new Promise((resolve, reject) => {
@@ -152,7 +200,8 @@ export const retrieveHurricaneTableCountyData: (fips: number) => Promise<Array<H
     return new Promise((resolve, reject) => {
         executeQuery(
             generateUrlParams(
-                'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/hurricane_aware_test_v3/FeatureServer/0',
+                // 'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/hurricane_aware_test_v3/FeatureServer/0',
+                'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/0',
                 {
                     outFields: [
                         'acs_fips as fips',
@@ -206,7 +255,7 @@ export type HurricaneAwareCountyWatchAndWarningFeature = {
 export const retrieveHurricaneAwareCountyWatchesAndWarnings: (fips: number) => Promise<Array<HurricaneAwareCountyWatchAndWarningFeature>> = (fips: number) => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
-            'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/hurricane_aware_test_v3/FeatureServer/5',
+            'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/5',
             {
                 outFields: [
                     'acs_fips as fips',
@@ -350,7 +399,7 @@ export const retrieveCountyFIPSCodeFromHurricaneService: (geometry: PointGeometr
     return new Promise((resolve, reject) => {
         executeQuery(
             generateUrlParams(
-                'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/hurricane_aware_test_v3/FeatureServer/0',
+                'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/0',
                 {
                     outFields: ['acs_fips as fips'],
                     geometry: `{"x": ${geometry.x},"y": ${geometry.y},"spatialReference": {"wkid": ${geometry.spatialReference}}}`,
@@ -379,7 +428,7 @@ export type HurricaneAwareActiveStormsTableFeature = {
 export const getHurricaneAwareActiveStormsTableFeatures: () => Promise<Array<HurricaneAwareActiveStormsTableFeature>> = () => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
-            'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/hurricane_aware_test_v3/FeatureServer/3',
+            'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/3',
             {
                 outfields: [
                     'OBJECTID as OBJECTID',
@@ -408,7 +457,7 @@ export type HurricaneAwareStormForecastFeature = {
 export const getHurricaneAwareStormForecastFeatures: (stormName: string) => Promise<Array<HurricaneAwareStormForecastFeature>> = (stormName: string) => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
-            'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/hurricane_aware_test_v3/FeatureServer/2', {
+            'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/2', {
             where: `STORMNAME = '${stormName}'`,
             outFields: [
                 'OBJECTID as OBJECTID',
@@ -438,7 +487,7 @@ export type HurricaneAwareStormObservedPositionFeature = {
 export const getHurricaneAwareStormObservedPositionFeatures: (stormName: string) => Promise<Array<HurricaneAwareStormObservedPositionFeature>> = (stormName: string) => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
-            'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/hurricane_aware_test_v3/FeatureServer/1',
+            'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1',
             {
                 where: `STORMNAME = '${stormName}'`,
                 outFields: [
@@ -454,12 +503,28 @@ export const getHurricaneAwareStormObservedPositionFeatures: (stormName: string)
 
 }
 
-// export const 
+export type HurricaneAwareKeyMessageFeature = {
+    OBJECTID: number,
+    stormName: string,
+    message: string
+}
 
+export const getHurricaneAwareKeyMessageFeatures: (stormName: string) => Promise<Array<HurricaneAwareKeyMessageFeature>> = (stormName: string) => {
+    return new Promise((resolve, reject) => {
+        const url = generateUrlParams(
+            'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1',
+            {
+                where: `STORMNAME = '${stormName}'`,
+                outFields: [
+                    'OBJECTID as OBJECTID',
+                    'stormname as stormName',
+                    'key_messages as message'
+                ]
+            });
 
-
-
-
+        executeQuery(url, true, resolve, reject);
+    });
+}
 
 export const retrieveListOfNationalDroughtLevelPeriods: any = () => {
     return new Promise((resolve, reject) => {
@@ -592,52 +657,6 @@ export const getPopulationHistory: any = (getCountyOrStateData: 'county' | 'stat
                 true
             )
             , true, resolve, reject, true)
-    });
-}
-
-export const retrieveWindGustData: (geometry: PointGeometryQueryParameters) => Promise<any> = (geometry: PointGeometryQueryParameters) => {
-
-
-
-    return new Promise((resolve, reject) => {
-
-
-        try {
-
-            const xmin = Math.floor(geometry.x);
-            const xmax = Math.ceil(geometry.x);
-            const ymin = Math.floor(geometry.y);
-            const ymax = Math.ceil(geometry.y);
-            const extent = {
-                xmin: xmin,
-                xmax: xmax,
-                ymin: ymin,
-                ymax: ymax
-            }
-
-
-            const url = generateUrlParams(
-                'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NDFD_WindGust_v1/FeatureServer/0',
-                {
-                    where: '',
-                    outFields: ['*'],
-                    // geometry: `{"x": ${geometry.x.toPrecision(6)},"y": ${geometry.y.toPrecision(6)},"spatialReference": {"wkid": ${geometry.spatialReference}}}`,
-                    // geometry: `{"xmin": ${Math.floor(geometry.x)},"xmax": ${Math.ceil(geometry.x)}, "ymin": ${Math.floor(geometry.y)}, "ymax": ${Math.ceil(geometry.y)},"spatialReference": {"wkid": ${geometry.spatialReference}}}`,
-                    // inSR: geometry.spatialReference,
-                    outSR: 4326,
-                    geometryType: 'esriGeometryPoint',
-                    // geometryType: 'esriGeometryEnvelope',
-                    returnGeometry: true,
-                    geometryPrecision: 4,
-                    resultType: 'tile',
-                    cacheHint: true,
-                    quantizationParameters: JSON.stringify({ extent: extent })
-                }
-            )
-            executeQuery(url, false, resolve, reject);
-        } catch (e) {
-            console.error('error retrieving wind gust data', e);
-        }
     });
 }
 
