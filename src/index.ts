@@ -445,7 +445,7 @@ export type HurricaneAwareStormForecastFeature = {
     OBJECTID: number,
     stormName: string,
     basin: string,
-    advisoryDate: string,
+    advisoryDate: number,
     dateLabel: string,
     fullDate: string,
     maxWind: number,
@@ -481,26 +481,30 @@ export type HurricaneAwareStormObservedPositionFeature = {
     OBJECTID: number,
     stormName: string,
     totalpop: number,
-    basin: string
+    basin: string,
+    date: number,
+    intensity: number
 }
 
-export const getHurricaneAwareStormObservedPositionFeatures: (stormName: string) => Promise<Array<HurricaneAwareStormObservedPositionFeature>> = (stormName: string) => {
+export const getHurricaneAwareStormObservedPositionFeatures: () => Promise<Array<HurricaneAwareStormObservedPositionFeature>> = () => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1',
             {
-                where: `STORMNAME = '${stormName}'`,
+                // where: `STORMNAME = '${stormName}'`,
+                where: `1=1`,
                 outFields: [
                     'OBJECTID as OBJECTID',
                     'STORMNAME as stormName',
                     'BASIN as basin',
-                    'STORMTYPE as stormType'
+                    'STORMTYPE as stormType',
+                    'DTG as date',
+                    'INTENSITY as intensity'
                 ]
             });
 
         executeQuery(url, true, resolve, reject);
     });
-
 }
 
 export type HurricaneAwareKeyMessageFeature = {
