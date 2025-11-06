@@ -459,6 +459,7 @@ export const getHurricaneAwareStormForecastFeatures: (stormName: string) => Prom
         const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/2', {
             where: `STORMNAME = '${stormName}'`,
+            orderBy: 'FLDATELABEL asc',
             outFields: [
                 'OBJECTID as OBJECTID',
                 'STORMNAME as stormName',
