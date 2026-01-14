@@ -33,50 +33,55 @@ const generateUrlParams = (serviceUrl: string, options: any, queryingRelatedFeat
 
 
 function executeQuery(url: string, returnAttributesOnly: boolean, resolve: (value: any) => void, reject: (reason?: any) => void, queryingRelatedFeatures?: boolean, reverseGeocoding?: boolean, queryingItemJSON?: boolean) {
-    fetch(url)
-        .then((response) => {
-            response.json().then((data) => {
-                if (data.error) {
-                    reject(data.error);
-                    // reject(url)
-                    return;
-                }
-                if (reverseGeocoding || queryingItemJSON) {
-                    resolve(data);
-                    return;
-                }
-                const temp: Array<any> = [];
-                if (queryingRelatedFeatures) {
-                    data.relatedRecordGroups[0]?.relatedRecords?.forEach((feature: any) => {
-                        temp.push(feature.attributes);
-                    });
-                }
-                else {
-                    data.features.forEach((feature: types.Point | types.Polygon | types.Polyline) => {
-                        if (returnAttributesOnly) {
-                            temp.push(feature.attributes)
-                        }
-                        else temp.push(
-                            {
-                                attributes: feature.attributes,
-                                spatialReferenceWkid: data.spatialReference.wkid ?? null,
-                                geometry: feature.geometry ?? null
+
+    try {
+        fetch(url)
+            .then((response) => {
+                response.json().then((data) => {
+                    if (data.error) {
+                        reject(data.error);
+                        // reject(url)
+                        return;
+                    }
+                    if (reverseGeocoding || queryingItemJSON) {
+                        resolve(data);
+                        return;
+                    }
+                    const temp: Array<any> = [];
+                    if (queryingRelatedFeatures) {
+                        data.relatedRecordGroups[0]?.relatedRecords?.forEach((feature: any) => {
+                            temp.push(feature.attributes);
+                        });
+                    }
+                    else {
+                        data.features.forEach((feature: types.Point | types.Polygon | types.Polyline) => {
+                            if (returnAttributesOnly) {
+                                temp.push(feature.attributes)
                             }
-                        );
-                    });
-                }
-                resolve(temp);
-                // resolve(data);
-            })
-                .catch((e) => {
-                    reject(e);
-                    // reject(url);
+                            else temp.push(
+                                {
+                                    attributes: feature.attributes,
+                                    spatialReferenceWkid: data.spatialReference.wkid ?? null,
+                                    geometry: feature.geometry ?? null
+                                }
+                            );
+                        });
+                    }
+                    resolve(temp);
+                    // resolve(data);
                 })
-        })
-        .catch((e) => {
-            reject(e)
-            // reject(url)
-        });
+                    .catch((e) => {
+                        reject(e);
+                        // reject(url);
+                    })
+            })
+            .catch((e) => {
+                reject(e)
+                // reject(url)
+            });
+    } catch (e) {
+        reject(e);
+    }
 }
 
 // retrieve the last data edit date for the wind gust layer
