@@ -1,0 +1,265 @@
+import { executeQuery, generateUrlParams, PointGeometryQueryParameters } from "../utilityFunctions";
+const config = require('./config.json');
+// import config from './config.json';
+
+// the format that the function returns data in
+export type CountyAndStateRequest = {
+    NAME: string,
+    State: string,
+};
+
+export type GetFipsRequest = { GEOID: string };
+
+export type DroughtPopRequest = {
+    P0010001_D0: number,
+    P0010001_D1: number,
+    P0010001_D2: number,
+    P0010001_D3: number,
+    P0010001_D4: number,
+    P0010001_Dx: number,
+    P0020002_Dx: number,
+    P0020003_Dx: number,
+};
+
+export type DroughtHousingRequest = {
+    H0010001_Dx: number,
+    H0010001_D4: number,
+    H0010001_D3: number,
+    H0010001_D2: number,
+    H0010001_D1: number,
+    H0010001_D0: number,
+};
+
+export type PopulationDataRequest = {
+    P0010001: number,
+    P0020002: number,
+    P0020003: number,
+};
+
+export type HousingDataRequest = {
+    H0010001: number,
+};
+
+
+export const retrieveListOfNationalDroughtLevelPeriods: any = () => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                config.nationalDroughtServiceUrl,
+                {
+                    outFields: [config.nationalAndWaterDroughtLevelTimeFields],
+                    returnGeometry: false,
+                    cacheHint: true,
+                },
+                false
+            )
+            , true, resolve, reject, false)
+    });
+}
+
+export const retrieveDroughtLevelData: any = (
+    featureCategory: 'county' | 'state' | 'nation' | 'water',
+    id?: string
+) => {
+    let serviceUrl: string = '';
+    let where = '1=1';
+    switch (featureCategory) {
+        case ('county'):
+            serviceUrl = config.countyDroughtServiceUrl
+            where = `${config.droughtServiceFipsFieldName} = '${id}'`
+            where
+            break;
+        case ('state'):
+            serviceUrl = config.stateDroughtServiceUrl
+            where = `${config.droughtServiceFipsFieldName} = '${id}'`
+            break;
+        case ('nation'):
+            serviceUrl = config.nationalDroughtServiceUrl
+            break;
+        case ('water'):
+            serviceUrl = config.waterDroughtServiceUrl;
+            where = `huc4 = '${id}'`
+            break;
+    }
+
+    return new Promise((resolve, reject) => {
+
+        executeQuery(
+            generateUrlParams(
+                serviceUrl,
+
+                {
+                    outFields: [
+                        ['county', 'state'].find((f: string) => f === featureCategory) ? config.droughtLevelOutFields : config.nationalDroughtLevelOutFields,
+                        ['county', 'state'].find((f: string) => f === featureCategory) ? config.droughtLevelTimeFields : config.nationalAndWaterDroughtLevelTimeFields,
+                        // ['county', 'state'].find((c: string) => c === featureCategory) !== undefined ? config.droughtServiceFipsFieldName : ''
+                    ],
+                    where: where,
+                    returnGeometry: false,
+                    orderByFields: `${['county', 'state'].find((f: string) => f === featureCategory) ? config.droughtDateFieldName : config.nationalAndWaterDroughtFieldName} DESC`,
+                    cacheHint: true,
+                }
+            )
+            , true, resolve, reject)
+    });
+}
+
+export const getPopulationServiceData:
+    (
+        getCountyOrStateData: 'county' | 'state',
+        geometry: PointGeometryQueryParameters,
+        returnIdInformationData: boolean,
+        returnPopulationData: boolean,
+        returnHousingData: boolean,
+        returnAgricultureData: boolean,
+        returnEconomicImpactData: boolean,
+        getAgriValue: boolean,
+    ) => Promise<any> =
+    (
+        getCountyOrStateData: 'county' | 'state',
+        geometry: PointGeometryQueryParameters,
+        returnIdInformationData: boolean,
+        returnPopulationData: boolean,
+        returnHousingData: boolean,
+        returnAgricultureData: boolean,
+        returnEconomicImpactData: boolean,
+        getAgriValue: boolean,
+
+    ) => {
+        // make call 
+        // what return?? put in out fields
+        return new Promise((resolve, reject) => {
+            executeQuery(
+                generateUrlParams(
+                    getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                    {
+                        outFields: [
+                            returnIdInformationData ? (getCountyOrStateData === 'county' ? config.countyIdInformationOutFields : config.stateIdInformationOutFields) : '',
+                            returnPopulationData ? config.populationFields : '',
+                            returnHousingData ? config.housingFields : '',
+                            returnAgricultureData ? config.agricultureLayerFields : '',
+                            getCountyOrStateData === 'county' ? config.socialAndCommunityPopulationFields : '',
+                            returnEconomicImpactData && getCountyOrStateData === 'county' ? config.countyEconomicImpactPopulationFields : '',
+                            returnEconomicImpactData && getCountyOrStateData === 'state' ? config.stateEconomicImpactPopulationFields : '',
+                            getAgriValue ? 'AGRIVALUE' : ''
+                        ],
+                        geometry: `{"x": ${geometry.x},"y": ${geometry.y},"spatialReference": {"wkid": ${geometry.spatialReference}}}`,
+                        inSR: geometry.spatialReference,
+                        outSR: 4326,
+                        geometryType: 'esriGeometryPoint',
+                        returnGeometry: true,
+                        geometryPrecision: 4,
+                        resultType: 'tile',
+                        cacheHint: true,
+                    }
+                )
+                , false, resolve, reject)
+        });
+    }
+
+export const getPopulationHistory: any = (getCountyOrStateData: 'county' | 'state', objectId: number) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                {
+                    outFields: ['*'],
+                    objectIds: [objectId],
+                    relationshipId: getCountyOrStateData === 'county' ? config.countyTableRelationshipId : config.stateTableRelationshipId,
+                    returnGeometry: false,
+                    cacheHint: true,
+                },
+                true
+            )
+            , true, resolve, reject, true)
+    });
+}
+
+export const getAgricultureHistory: any = (getCountyOrStateData: 'county' | 'state', objectId: number) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                getCountyOrStateData === 'county' ? config.countyPopulationServiceUrl : config.statePopulationServiceUrl,
+                {
+                    outFields: ['*'],
+                    objectIds: [objectId],
+                    relationshipId: getCountyOrStateData === 'county' ? config.countyAgricultureRelationshipId : config.stateAgricultureRelationshipId,
+                    returnGeometry: false,
+                    cacheHint: true,
+                },
+                true
+            )
+            , true, resolve, reject, true)
+    });
+}
+
+export const getHuc4WatershedData: (
+    geometry: PointGeometryQueryParameters
+) => any = (geometry: PointGeometryQueryParameters) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                config.watershedHuc4LayerServiceUrl,
+                {
+                    geometry: `{"x": ${geometry.x.toPrecision(6)},"y": ${geometry.y.toPrecision(6)},"spatialReference": {"wkid": ${geometry.spatialReference}}}`,
+                    inSR: geometry.spatialReference,
+                    outFields: ['objectid', 'huc4 as HUC4', 'name as NAME'],
+                    // outFields: ['*'],
+                    outSR: 4326,
+                    geometryType: 'esriGeometryPoint',
+                    returnGeometry: true,
+                    geometryPrecision: 4,
+                    resultType: 'tile',
+                    cacheHint: true,
+                }
+            ), false, resolve, reject
+        );
+    });
+}
+
+export const getFlowlineData: (huc4ID: string) => any = (huc4ID: string) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                config.flowlinesLayerServiceUrl,
+                {
+                    // huc4: huc4ID,
+                    where: `huc4 = '${huc4ID}'`,
+                    outFields: ['*'],
+                    returnGeometry: false,
+                    cacheHint: true,
+                }
+            ), true, resolve, reject
+        )
+    });
+}
+
+export const getRelatedFlowsData: (featureID: string) => any = (featureID: string) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                config.nwmFlowsTableUrl,
+                {
+                    where: `feature_id = '${featureID}'`,
+                    outFields: ['*'],
+                    cacheHint: true,
+                }
+            ), true, resolve, reject
+        )
+    });
+}
+
+export const getLocalReservoirData: (huc4ID: string) => any = (huc4ID: string) => {
+    return new Promise((resolve, reject) => {
+        executeQuery(
+            generateUrlParams(
+                config.nidSubsetTableUrl,
+                {
+                    where: `huc4 = '${huc4ID}'`,
+                    outFields: ['*'],
+                    cacheHint: true,
+                }
+            ), true, resolve, reject
+        )
+    });
+}

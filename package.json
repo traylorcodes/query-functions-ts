@@ -3,6 +3,13 @@
   "version": "1.0.15",
   "description": "Querying Functions for use in the Living Atlas team's applications",
   "main": "./dist/index.js",
+  "exports": {
+    "*": {
+      "types": "./index.d.ts",
+      "require": "./index.js",
+      "import": "./index.js"
+    }
+  },
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
