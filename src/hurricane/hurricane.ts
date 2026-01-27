@@ -1,19 +1,20 @@
 import * as types from './types';
-import * as utilities from '../utilityFunctions'
+import { generateUrlParams, executeQuery, PointGeometryQueryParameters } from '../utility';
+// import * as utilities from '../utility'
 
 // declare namespace Hurricane {
-    export type HurricaneAwareCountyTableReturnFeature             = types.HurricaneAwareCountyTableReturnFeature;
-    export type HurricaneAwareKeyMessageFeature               = types.HurricaneAwareKeyMessageFeature;
-    export type HurricaneAwareWindGustFeature               = types.HurricaneAwareWindGustFeature;
-    export type HurricaneAwarePrecipFeature                   = types.HurricaneAwarePrecipFeature;
-    export type HurricaneAwareActiveStormsTableFeature             = types.HurricaneAwareActiveStormsTableFeature;
-    export type HurricaneAwareStormForecastFeature             = types.HurricaneAwareStormForecastFeature;
-    export type HurricaneAwareStormObservedPositionFeature    = types.HurricaneAwareStormObservedPositionFeature;
+export type HurricaneAwareCountyTableReturnFeature = types.HurricaneAwareCountyTableReturnFeature;
+export type HurricaneAwareKeyMessageFeature = types.HurricaneAwareKeyMessageFeature;
+export type HurricaneAwareWindGustFeature = types.HurricaneAwareWindGustFeature;
+export type HurricaneAwarePrecipFeature = types.HurricaneAwarePrecipFeature;
+export type HurricaneAwareActiveStormsTableFeature = types.HurricaneAwareActiveStormsTableFeature;
+export type HurricaneAwareStormForecastFeature = types.HurricaneAwareStormForecastFeature;
+export type HurricaneAwareStormObservedPositionFeature = types.HurricaneAwareStormObservedPositionFeature;
 
-    export const retrieveHurricaneTableCountyData: (fips: number) => Promise<Array<HurricaneAwareCountyTableReturnFeature>> = (fips: number) => {
+export const retrieveHurricaneTableCountyData: (fips: number) => Promise<Array<HurricaneAwareCountyTableReturnFeature>> = (fips: number) => {
     return new Promise((resolve, reject) => {
-        utilities.executeQuery(
-            utilities.generateUrlParams(
+        executeQuery(
+            generateUrlParams(
                 // 'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/hurricane_aware_test_v3/FeatureServer/0',
                 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/0',
                 {
@@ -63,7 +64,7 @@ import * as utilities from '../utilityFunctions'
 
 export const retrieveHurricaneAwareCountyWatchesAndWarnings: (fips: number) => Promise<Array<types.HurricaneAwareCountyWatchAndWarningFeature>> = (fips: number) => {
     return new Promise((resolve, reject) => {
-        const url = utilities.generateUrlParams(
+        const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/5',
             {
                 outFields: [
@@ -76,13 +77,13 @@ export const retrieveHurricaneAwareCountyWatchesAndWarnings: (fips: number) => P
                 cacheHint: true
             }
         )
-        utilities.executeQuery(url, true, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     })
 }
 
-export const retrieveHurricaneAwareWindGustData: (geometry: utilities.PointGeometryQueryParameters) => Promise<Array<HurricaneAwareWindGustFeature>> = (geometry: utilities.PointGeometryQueryParameters) => {
+export const retrieveHurricaneAwareWindGustData: (geometry: PointGeometryQueryParameters) => Promise<Array<HurricaneAwareWindGustFeature>> = (geometry: PointGeometryQueryParameters) => {
     return new Promise((resolve, reject) => {
-        const url = utilities.generateUrlParams(
+        const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NDFD_WindGust_v1/FeatureServer/0',
             {
                 outFields: [
@@ -103,13 +104,13 @@ export const retrieveHurricaneAwareWindGustData: (geometry: utilities.PointGeome
                 cacheHint: true
             }
         );
-        utilities.executeQuery(url, true, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 
-export const retrieveHurricaneAwareWindSpeedData: (geometry: utilities.PointGeometryQueryParameters) => Promise<Array<HurricaneAwareWindGustFeature>> = (geometry: utilities.PointGeometryQueryParameters) => {
+export const retrieveHurricaneAwareWindSpeedData: (geometry: PointGeometryQueryParameters) => Promise<Array<HurricaneAwareWindGustFeature>> = (geometry: PointGeometryQueryParameters) => {
     return new Promise((resolve, reject) => {
-        const url = utilities.generateUrlParams(
+        const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NDFD_WindSpeed_v1/FeatureServer/0',
             {
                 outFields: [
@@ -130,13 +131,13 @@ export const retrieveHurricaneAwareWindSpeedData: (geometry: utilities.PointGeom
                 cacheHint: true
             }
         );
-        utilities.executeQuery(url, true, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 
-export const retrieveHurricaneAwarePrecipAmountFeatures: (geometry: utilities.PointGeometryQueryParameters) => Promise<Array<HurricaneAwarePrecipFeature>> = (geometry: utilities.PointGeometryQueryParameters) => {
+export const retrieveHurricaneAwarePrecipAmountFeatures: (geometry: PointGeometryQueryParameters) => Promise<Array<HurricaneAwarePrecipFeature>> = (geometry: PointGeometryQueryParameters) => {
     return new Promise((resolve, reject) => {
-        const url = utilities.generateUrlParams(
+        const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NDFD_Precipitation_v1/FeatureServer/0',
             {
                 outFields: [
@@ -157,13 +158,13 @@ export const retrieveHurricaneAwarePrecipAmountFeatures: (geometry: utilities.Po
                 cacheHint: true
             }
         );
-        utilities.executeQuery(url, true, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 
-export const retrieveHurricaneAwarePrecipAccumulationFeatures: (geometry: utilities.PointGeometryQueryParameters) => Promise<Array<HurricaneAwarePrecipFeature>> = (geometry: utilities.PointGeometryQueryParameters) => {
+export const retrieveHurricaneAwarePrecipAccumulationFeatures: (geometry: PointGeometryQueryParameters) => Promise<Array<HurricaneAwarePrecipFeature>> = (geometry: PointGeometryQueryParameters) => {
     return new Promise((resolve, reject) => {
-        const url = utilities.generateUrlParams(
+        const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NDFD_Precipitation_v1/FeatureServer/1',
             {
                 outFields: [
@@ -184,14 +185,14 @@ export const retrieveHurricaneAwarePrecipAccumulationFeatures: (geometry: utilit
                 cacheHint: true
             }
         );
-        utilities.executeQuery(url, true, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 
-export const retrieveCountyFIPSCodeFromHurricaneService: (geometry: utilities.PointGeometryQueryParameters) => Promise<Array<{ fips: number }>> = (geometry: utilities.PointGeometryQueryParameters) => {
+export const retrieveCountyFIPSCodeFromHurricaneService: (geometry: PointGeometryQueryParameters) => Promise<Array<{ fips: number }>> = (geometry: PointGeometryQueryParameters) => {
     return new Promise((resolve, reject) => {
-        utilities.executeQuery(
-            utilities.generateUrlParams(
+        executeQuery(
+            generateUrlParams(
                 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/0',
                 {
                     outFields: ['acs_fips as fips'],
@@ -213,7 +214,7 @@ export const retrieveCountyFIPSCodeFromHurricaneService: (geometry: utilities.Po
 
 export const getHurricaneAwareActiveStormsTableFeatures: () => Promise<Array<HurricaneAwareActiveStormsTableFeature>> = () => {
     return new Promise((resolve, reject) => {
-        const url = utilities.generateUrlParams(
+        const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/3',
             {
                 outfields: [
@@ -223,13 +224,13 @@ export const getHurricaneAwareActiveStormsTableFeatures: () => Promise<Array<Hur
                     'basin as basin'
                 ]
             });
-        utilities.executeQuery(url, true, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 
 export const getHurricaneAwareStormForecastFeatures: (stormName: string) => Promise<Array<HurricaneAwareStormForecastFeature>> = (stormName: string) => {
     return new Promise((resolve, reject) => {
-        const url = utilities.generateUrlParams(
+        const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/2', {
             where: `STORMNAME = '${stormName}'`,
             orderBy: 'FLDATELABEL asc',
@@ -247,13 +248,13 @@ export const getHurricaneAwareStormForecastFeatures: (stormName: string) => Prom
             ]
         });
 
-        utilities.executeQuery(url, true, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 
 export const getHurricaneAwareStormObservedPositionFeatures: () => Promise<Array<HurricaneAwareStormObservedPositionFeature>> = () => {
     return new Promise((resolve, reject) => {
-        const url = utilities.generateUrlParams(
+        const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1',
             {
                 // where: `STORMNAME = '${stormName}'`,
@@ -268,13 +269,13 @@ export const getHurricaneAwareStormObservedPositionFeatures: () => Promise<Array
                 ]
             });
 
-        utilities.executeQuery(url, true, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 
 export const getHurricaneAwareKeyMessageFeatures: (stormName: string) => Promise<Array<HurricaneAwareKeyMessageFeature>> = (stormName: string) => {
     return new Promise((resolve, reject) => {
-        const url = utilities.generateUrlParams(
+        const url = generateUrlParams(
             'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1',
             {
                 where: `STORMNAME = '${stormName}'`,
@@ -285,7 +286,7 @@ export const getHurricaneAwareKeyMessageFeatures: (stormName: string) => Promise
                 ]
             });
 
-        utilities.executeQuery(url, true, resolve, reject);
+        executeQuery(url, true, resolve, reject);
     });
 }
 // }

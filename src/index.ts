@@ -1,8 +1,33 @@
 /*
     Modules to help retrieve data from feature services
 */
+
+
+
+// export const test: () => void = () => {
+
+// }
+
+// export test;
+
+// export type test = {
+
+// }
+
+
+
+
+
+
 export * from './hurricane/hurricane';
-export * as utilityFunctions from './utilityFunctions';
+export * from './drought/drought';
+export { reverseGeocodePoint } from './utility';
+
+
+
+
+// export * from './utility';
+// export * as utilityFunctions from './utility';
 
 
 
@@ -306,7 +331,7 @@ export * as utilityFunctions from './utilityFunctions';
 //         getAgriValue: boolean,
 
 //     ) => {
-//         // make call 
+//         // make call
 //         // what return?? put in out fields
 //         return new Promise((resolve, reject) => {
 //             executeQuery(

@@ -1,44 +1,13 @@
-import { executeQuery, generateUrlParams, PointGeometryQueryParameters } from "../utilityFunctions";
+import { executeQuery, generateUrlParams, PointGeometryQueryParameters } from "../utility";
 const config = require('./config.json');
-// import config from './config.json';
+import * as types from './types';
 
-// the format that the function returns data in
-export type CountyAndStateRequest = {
-    NAME: string,
-    State: string,
-};
-
-export type GetFipsRequest = { GEOID: string };
-
-export type DroughtPopRequest = {
-    P0010001_D0: number,
-    P0010001_D1: number,
-    P0010001_D2: number,
-    P0010001_D3: number,
-    P0010001_D4: number,
-    P0010001_Dx: number,
-    P0020002_Dx: number,
-    P0020003_Dx: number,
-};
-
-export type DroughtHousingRequest = {
-    H0010001_Dx: number,
-    H0010001_D4: number,
-    H0010001_D3: number,
-    H0010001_D2: number,
-    H0010001_D1: number,
-    H0010001_D0: number,
-};
-
-export type PopulationDataRequest = {
-    P0010001: number,
-    P0020002: number,
-    P0020003: number,
-};
-
-export type HousingDataRequest = {
-    H0010001: number,
-};
+export type CountyAndStateRequest = types.CountyAndStateRequest;
+export type GetFipsRequest = types.GetFipsRequest;
+export type DroughtPopRequest = types.DroughtPopRequest;
+export type DroughtHousingRequest = types.DroughtHousingRequest;
+export type PopulationDataRequest = types.PopulationDataRequest;
+export type HousingDataRequest = types.HousingDataRequest;
 
 
 export const retrieveListOfNationalDroughtLevelPeriods: any = () => {
