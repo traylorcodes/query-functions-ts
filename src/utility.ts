@@ -69,6 +69,8 @@ export const executeQuery = (url: string, returnAttributesOnly: boolean, resolve
             .then((response) => {
                 response.json().then(
                     (data) => {
+                        // resolve(data);
+                        // console.log('\n\n\ndata: ', data, '\n\n\n');
                         if (data.error) {
                             reject(data.error);
                             // reject(url)

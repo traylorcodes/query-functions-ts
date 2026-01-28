@@ -289,4 +289,3 @@ export const getHurricaneAwareKeyMessageFeatures: (stormName: string) => Promise
         executeQuery(url, true, resolve, reject);
     });
 }
-// }

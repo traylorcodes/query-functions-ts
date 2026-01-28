@@ -3,11 +3,11 @@ const config = require('./config.json');
 import * as types from './types';
 
 export type CountyAndStateRequest = types.CountyAndStateRequest;
-export type GetFipsRequest = types.GetFipsRequest;
-export type DroughtPopRequest = types.DroughtPopRequest;
+export type GetFipsRequest        = types.GetFipsRequest;
+export type DroughtPopRequest      = types.DroughtPopRequest;
 export type DroughtHousingRequest = types.DroughtHousingRequest;
 export type PopulationDataRequest = types.PopulationDataRequest;
-export type HousingDataRequest = types.HousingDataRequest;
+export type HousingDataRequest    = types.HousingDataRequest;
 
 
 export const retrieveListOfNationalDroughtLevelPeriods: any = () => {
