@@ -1,8 +1,7 @@
 import * as types from './types';
 import { generateUrlParams, executeQuery, PointGeometryQueryParameters } from '../utility';
-// import * as utilities from '../utility'
 
-// declare namespace Hurricane {
+
 export type HurricaneAwareCountyTableReturnFeature = types.HurricaneAwareCountyTableReturnFeature;
 export type HurricaneAwareKeyMessageFeature = types.HurricaneAwareKeyMessageFeature;
 export type HurricaneAwareWindGustFeature = types.HurricaneAwareWindGustFeature;
@@ -15,7 +14,6 @@ export const retrieveHurricaneTableCountyData: (fips: number) => Promise<Array<H
     return new Promise((resolve, reject) => {
         executeQuery(
             generateUrlParams(
-                // 'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/hurricane_aware_test_v3/FeatureServer/0',
                 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/0',
                 {
                     outFields: [
@@ -212,10 +210,12 @@ export const retrieveCountyFIPSCodeFromHurricaneService: (geometry: PointGeometr
     });
 }
 
-export const getHurricaneAwareActiveStormsTableFeatures: () => Promise<Array<HurricaneAwareActiveStormsTableFeature>> = () => {
+export const getHurricaneAwareActiveStormsTableFeatures: (devService?: boolean) => Promise<Array<HurricaneAwareActiveStormsTableFeature>> = (devService?: boolean) => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
-            'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/3',
+            !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/3' :
+                'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Hurricane_Aware_Clone/FeatureServer/3'
+            ,
             {
                 outfields: [
                     'OBJECTID as OBJECTID',
@@ -228,34 +228,37 @@ export const getHurricaneAwareActiveStormsTableFeatures: () => Promise<Array<Hur
     });
 }
 
-export const getHurricaneAwareStormForecastFeatures: (stormName: string) => Promise<Array<HurricaneAwareStormForecastFeature>> = (stormName: string) => {
+export const getHurricaneAwareStormForecastFeatures: (stormName: string, devService?: boolean) => Promise<Array<HurricaneAwareStormForecastFeature>> = (stormName: string, devService?: boolean) => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
-            'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/2', {
-            where: `STORMNAME = '${stormName}'`,
-            orderBy: 'FLDATELABEL asc',
-            outFields: [
-                'OBJECTID as OBJECTID',
-                'STORMNAME as stormName',
-                'BASIN as basin',
-                'ADVDATE as advisoryDate',
-                'MAXWIND as maxWind',
-                'GUST as gust',
-                'TCDVLP as TCDVLP',
-                'STORMSRC as STORMSRC',
-                'DATELBL as dateLabel',
-                'FLDATELBL as fullDate'
-            ]
-        });
+            !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/2' :
+                'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Hurricane_Aware_Clone/FeatureServer/2',
+            {
+                where: `STORMNAME = '${stormName}'`,
+                orderBy: 'FLDATELABEL asc',
+                outFields: [
+                    'OBJECTID as OBJECTID',
+                    'STORMNAME as stormName',
+                    'BASIN as basin',
+                    'ADVDATE as advisoryDate',
+                    'MAXWIND as maxWind',
+                    'GUST as gust',
+                    'TCDVLP as TCDVLP',
+                    'STORMSRC as STORMSRC',
+                    'DATELBL as dateLabel',
+                    'FLDATELBL as fullDate'
+                ]
+            });
 
         executeQuery(url, true, resolve, reject);
     });
 }
 
-export const getHurricaneAwareStormObservedPositionFeatures: () => Promise<Array<HurricaneAwareStormObservedPositionFeature>> = () => {
+export const getHurricaneAwareStormObservedPositionFeatures: (devService?: boolean) => Promise<Array<HurricaneAwareStormObservedPositionFeature>> = (devService?: boolean) => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
-            'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1',
+            !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1' :
+                'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Hurricane_Aware_Clone/FeatureServer/1',
             {
                 // where: `STORMNAME = '${stormName}'`,
                 where: `1=1`,
@@ -273,10 +276,11 @@ export const getHurricaneAwareStormObservedPositionFeatures: () => Promise<Array
     });
 }
 
-export const getHurricaneAwareKeyMessageFeatures: (stormName: string) => Promise<Array<HurricaneAwareKeyMessageFeature>> = (stormName: string) => {
+export const getHurricaneAwareKeyMessageFeatures: (stormName: string, devService?: boolean) => Promise<Array<HurricaneAwareKeyMessageFeature>> = (stormName: string, devService?: boolean) => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
-            'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1',
+            !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1' :
+                'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Hurricane_Aware_Clone/FeatureServer/4',
             {
                 where: `STORMNAME = '${stormName}'`,
                 outFields: [
