@@ -34,8 +34,8 @@ export type HurricaneAwareCountyTableReturnFeature = {
 
 export type HurricaneAwareKeyMessageFeature = {
     OBJECTID: number,
-    stormName: string,
-    message: string
+    stormName: string | null,
+    message: string | null,
 }
 
 export type HurricaneAwareWindGustFeature = {

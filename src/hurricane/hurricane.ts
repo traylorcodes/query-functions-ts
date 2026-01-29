@@ -276,13 +276,14 @@ export const getHurricaneAwareStormObservedPositionFeatures: (devService?: boole
     });
 }
 
-export const getHurricaneAwareKeyMessageFeatures: (stormName: string, devService?: boolean) => Promise<Array<HurricaneAwareKeyMessageFeature>> = (stormName: string, devService?: boolean) => {
+export const getHurricaneAwareKeyMessageFeatures: (devService?: boolean) => Promise<Array<HurricaneAwareKeyMessageFeature>> = (devService?: boolean) => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
             !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1' :
                 'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Hurricane_Aware_Clone/FeatureServer/4',
             {
-                where: `STORMNAME = '${stormName}'`,
+                where: `1=1`,
+                // where: `STORMNAME = '${stormName}'`,
                 outFields: [
                     'OBJECTID as OBJECTID',
                     'stormname as stormName',
