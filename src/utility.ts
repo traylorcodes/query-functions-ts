@@ -67,54 +67,61 @@ export const executeQuery = (url: string, returnAttributesOnly: boolean, resolve
     try {
         fetch(url)
             .then((response) => {
-                response.json().then(
-                    (data) => {
-                        // resolve(data);
-                        // console.log('\n\n\ndata: ', data, '\n\n\n');
-                        if (data.error) {
-                            reject(data.error);
-                            // reject(url)
-                            return;
-                        }
-                        if (reverseGeocoding || queryingItemJSON) {
-                            resolve(data);
-                            return;
-                        }
-                        const temp: Array<any> = [];
-                        if (queryingRelatedFeatures) {
-                            data.relatedRecordGroups[0]?.relatedRecords?.forEach((feature: any) => {
-                                temp.push(feature.attributes);
-                            });
-                        }
-                        else {
-                            data.features.forEach((feature: Point | Polygon | Polyline) => {
-                                if (returnAttributesOnly) {
-                                    temp.push(feature.attributes)
-                                }
-                                else temp.push(
-                                    {
-                                        attributes: feature.attributes,
-                                        spatialReferenceWkid: data.spatialReference.wkid ?? null,
-                                        geometry: feature.geometry ?? null
+                try {
+
+                    response.json().then(
+                        (data) => {
+                            // resolve(data);
+                            // console.log('\n\n\ndata: ', data, '\n\n\n');
+                            if (data.error) {
+                                reject(data.error);
+                                // reject(url)
+                                return;
+                            }
+                            if (reverseGeocoding || queryingItemJSON) {
+                                resolve(data);
+                                return;
+                            }
+                            const temp: Array<any> = [];
+                            if (queryingRelatedFeatures) {
+                                data.relatedRecordGroups[0]?.relatedRecords?.forEach((feature: any) => {
+                                    temp.push(feature.attributes);
+                                });
+                            }
+                            else {
+                                data.features.forEach((feature: Point | Polygon | Polyline) => {
+                                    if (returnAttributesOnly) {
+                                        temp.push(feature.attributes)
                                     }
-                                );
-                            });
-                        }
-                        resolve(temp);
-                        // resolve(data);
-                    },
-                    (rejectedReason) => {
-                        reject(rejectedReason);
-                    })
-                    .catch((e) => {
-                        reject(e);
-                        // reject(url);
-                    })
+                                    else temp.push(
+                                        {
+                                            attributes: feature.attributes,
+                                            spatialReferenceWkid: data.spatialReference.wkid ?? null,
+                                            geometry: feature.geometry ?? null
+                                        }
+                                    );
+                                });
+                            }
+                            resolve(temp);
+                            // resolve(data);
+                        },
+                        (rejectedReason) => {
+                            reject(rejectedReason);
+                        })
+                        .catch((e) => {
+                            reject(e);
+                            // reject(url);
+                        })
+
+                } catch (e) {
+                    reject(e);
+                }
             },
                 (rejectedReason) => {
                     reject(rejectedReason);
                 }
             )
+            .catch((e) => { reject(e) })
 
     } catch (e) {
         reject(e);
