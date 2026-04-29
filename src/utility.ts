@@ -67,15 +67,16 @@ export const executeQuery = (url: string, returnAttributesOnly: boolean, resolve
     try {
         fetch(url)
             .then((response) => {
-                try {
-
+                // check if response was a non 2xx status
+                if (!response.ok) {
+                    reject(new Error('failed to fetch'));
+                    return;
+                }
+                else if (response.ok) {
                     response.json().then(
                         (data) => {
-                            // resolve(data);
-                            // console.log('\n\n\ndata: ', data, '\n\n\n');
                             if (data.error) {
                                 reject(data.error);
-                                // reject(url)
                                 return;
                             }
                             if (reverseGeocoding || queryingItemJSON) {
@@ -108,22 +109,20 @@ export const executeQuery = (url: string, returnAttributesOnly: boolean, resolve
                         (rejectedReason) => {
                             reject(rejectedReason);
                         })
+                        //catch clause for response.json();
                         .catch((e) => {
                             reject(e);
                             // reject(url);
-                        })
-
-                } catch (e) {
-                    reject(e);
+                        });
                 }
             },
+                // onRejected for fetch().then()
                 (rejectedReason) => {
                     reject(rejectedReason);
                 }
             )
-            .catch((e) => { reject(e) })
-
     } catch (e) {
+        // catch clause for fetch()
         reject(e);
     }
 }
