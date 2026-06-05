@@ -10,11 +10,13 @@ export type HurricaneAwareActiveStormsTableFeature = types.HurricaneAwareActiveS
 export type HurricaneAwareStormForecastFeature = types.HurricaneAwareStormForecastFeature;
 export type HurricaneAwareStormObservedPositionFeature = types.HurricaneAwareStormObservedPositionFeature;
 
-export const retrieveHurricaneTableCountyData: (fips: number) => Promise<Array<HurricaneAwareCountyTableReturnFeature>> = (fips: number) => {
+export const retrieveHurricaneTableCountyData: (fips: number, devService?: boolean) => Promise<Array<HurricaneAwareCountyTableReturnFeature>> = (fips: number, devService?: boolean) => {
     return new Promise((resolve, reject) => {
         executeQuery(
             generateUrlParams(
-                'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/0',
+                !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/0' :
+                    'https://rhvpkkiftonktxq3.svcs9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/test_demo/FeatureServer/9'
+                ,
                 {
                     outFields: [
                         'acs_fips as fips',
@@ -60,10 +62,11 @@ export const retrieveHurricaneTableCountyData: (fips: number) => Promise<Array<H
     });
 }
 
-export const retrieveHurricaneAwareCountyWatchesAndWarnings: (fips: number) => Promise<Array<types.HurricaneAwareCountyWatchAndWarningFeature>> = (fips: number) => {
+export const retrieveHurricaneAwareCountyWatchesAndWarnings: (fips: number, devService?: boolean) => Promise<Array<types.HurricaneAwareCountyWatchAndWarningFeature>> = (fips: number, devService?: boolean) => {
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
-            'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/5',
+            !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/5' :
+                'https://rhvpkkiftonktxq3.svcs9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/test_demo/FeatureServer/15',
             {
                 outFields: [
                     'acs_fips as fips',
@@ -187,11 +190,12 @@ export const retrieveHurricaneAwarePrecipAccumulationFeatures: (geometry: PointG
     });
 }
 
-export const retrieveCountyFIPSCodeFromHurricaneService: (geometry: PointGeometryQueryParameters) => Promise<Array<{ fips: number }>> = (geometry: PointGeometryQueryParameters) => {
+export const retrieveCountyFIPSCodeFromHurricaneService: (geometry: PointGeometryQueryParameters, devService?: boolean) => Promise<Array<{ fips: number }>> = (geometry: PointGeometryQueryParameters, devService?: boolean) => {
     return new Promise((resolve, reject) => {
         executeQuery(
             generateUrlParams(
-                'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/0',
+                !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/0' :
+                'https://rhvpkkiftonktxq3.svcs9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/test_demo/FeatureServer/9',
                 {
                     outFields: ['acs_fips as fips'],
                     geometry: `{"x": ${geometry.x},"y": ${geometry.y},"spatialReference": {"wkid": ${geometry.spatialReference}}}`,
@@ -214,7 +218,7 @@ export const getHurricaneAwareActiveStormsTableFeatures: (devService?: boolean) 
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
             !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/3' :
-                'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Hurricane_Aware_Clone/FeatureServer/3'
+                'https://rhvpkkiftonktxq3.svcs9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/test_demo/FeatureServer/13'
             ,
             {
                 outfields: [
@@ -232,7 +236,7 @@ export const getHurricaneAwareStormForecastFeatures: (stormName: string, devServ
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
             !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/2' :
-                'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Hurricane_Aware_Clone/FeatureServer/2',
+                'https://rhvpkkiftonktxq3.svcs9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/test_demo/FeatureServer/1',
             {
                 where: `STORMNAME = '${stormName}'`,
                 orderBy: 'FLDATELABEL asc',
@@ -258,7 +262,7 @@ export const getHurricaneAwareStormObservedPositionFeatures: (devService?: boole
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
             !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1' :
-                'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Hurricane_Aware_Clone/FeatureServer/1',
+                'https://rhvpkkiftonktxq3.svcs9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/test_demo/FeatureServer/0',
             {
                 // where: `STORMNAME = '${stormName}'`,
                 where: `1=1`,
@@ -280,7 +284,7 @@ export const getHurricaneAwareKeyMessageFeatures: (devService?: boolean) => Prom
     return new Promise((resolve, reject) => {
         const url = generateUrlParams(
             !devService ? 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/hurricane_aware_aggregated_data/FeatureServer/1' :
-                'https://services.arcgis.com/jIL9msH9OI208GCb/ArcGIS/rest/services/Hurricane_Aware_Clone/FeatureServer/4',
+                'https://rhvpkkiftonktxq3.svcs9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/test_demo/FeatureServer/12',
             {
                 where: `1=1`,
                 // where: `STORMNAME = '${stormName}'`,
